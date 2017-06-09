@@ -17,7 +17,13 @@ const visibleProps = [ 'assetID',
                        'license',
                        'tags',
                        'lastModifiedDate',
-                       'revisionTag' ]
+                       'revisionTag',
+
+                       // Properties specific to certain asset types
+                       'author',
+                       'authors',
+                       'published',
+                       'sourceName' ]
 
 $(document).ready(function(){
 })
@@ -45,6 +51,8 @@ setMetadataAssetID = function(ID) {
     )
 
     visibleProps.forEach(function(prop) {
+      if (!asset.hasOwnProperty(prop))
+        return;
       $('#metadata_table').append(
           $('<thead/>').append(
             $('<tr/>').append(
