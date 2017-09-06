@@ -2,15 +2,50 @@
 
 const fs = require('fs');
 const expect = require('chai').expect;
+const proxyquire = require('proxyquire');
 
-const libingester = require('../../lib/index');
+const libingester = proxyquire('../../lib/index', {
+    './verify': {
+        verify_metadata: () => {},
+        verify_manifest_entry: () => {},
+    },
+});
+
+class MockAsset extends libingester.BaseAsset {
+    fails_with_error(err) { this._err = err; }
+    set_dependent_assets(dependents) { this._dependents = dependents; }
+    get_dependent_assets() {
+        if (this._dependents) {
+            return this._dependents.map(asset => asset.asset_id);
+        }
+
+        return [];
+    }
+    _process() {
+        if (this._err) {
+            return Promise.reject(this._err);
+        }
+
+        return Promise.resolve();
+    }
+}
+
+function rmrf (dir) {
+    fs.readdirSync(dir).forEach(file => fs.unlinkSync(`${dir}/${file}`));
+    fs.rmdirSync(dir);
+}
+
+function readHatchManifest (hatch) {
+    const manifestPath = `./${hatch.get_path()}/hatch_manifest.json`;
+    return JSON.parse(fs.readFileSync(manifestPath));
+}
 
 describe('Hatch', function() {
     let hatch;
 
     afterEach(() => {
         if (fs.existsSync(hatch.get_path())) {
-            fs.rmdirSync(hatch.get_path());
+            rmrf(hatch.get_path());
         }
     });
 
@@ -127,7 +162,81 @@ describe('Hatch', function() {
             hatch = new libingester.Hatch("abcd", "en", { argv: ["--path", targetDir] });
         });
     });
+
+    describe('handles failed assets', () => {
+        beforeEach(() => {
+            hatch = new libingester.Hatch("abcd", "en", { argv: ["--no-tgz"] });
+        });
+
+        it('fails if all assets failed', () => {
+            const fails = new MockAsset();
+            fails.fails_with_error(new Error());
+            hatch.save_asset(fails);
+
+            return expectPromiseRejects(hatch.finish());
+        });
+
+        it('removes failed assets from a successful hatch', () => {
+            const fails = new MockAsset();
+            fails.fails_with_error(new Error());
+            hatch.save_asset(fails);
+
+            const succeeds = new MockAsset();
+            hatch.save_asset(succeeds);
+            
+            return hatch.finish().then(() => {
+                const manifest = readHatchManifest(hatch);
+                expect(manifest.assets).to.deep.equal([
+                    { asset_id: succeeds.asset_id },
+                ]);
+            });
+        });
+
+        it('fails an asset if one of its dependent assets fails', () => {
+            const root = new MockAsset();
+            const child = new MockAsset();
+            child.fails_with_error(new Error());
+            root.set_dependent_assets([child]);
+
+            // add a successful asset to prevent the hatch from failing
+            const succeeds = new MockAsset();
+            [root, child, succeeds].forEach(asset => hatch.save_asset(asset));
+
+            return hatch.finish().then(() => {
+                const manifest = readHatchManifest(hatch);
+                expect(manifest.assets).to.deep.equal([
+                    { asset_id: succeeds.asset_id },
+                ]);
+            });
+        });
+
+        it('fails dependent assets if their parent fails', () => {
+            const root = new MockAsset();
+            const child1 = new MockAsset();
+            const child2 = new MockAsset();
+            child1.fails_with_error(new Error());
+            root.set_dependent_assets([child1, child2]);
+
+            // add a successful asset to prevent the hatch from failing
+            const succeeds = new MockAsset();
+
+            [root, child1, child2, succeeds].forEach(asset => hatch.save_asset(asset));
+
+            return hatch.finish().then(() => {
+                const manifest = readHatchManifest(hatch);
+                expect(manifest.assets).to.deep.equal([
+                    { asset_id: succeeds.asset_id },
+                ]);
+            });
+        });
+    });
 });
+
+function expectPromiseRejects (p) {
+    return p.then(() => {
+        throw new Error(`Expected promise to reject, but it resolved!`);
+    }, () => {});
+}
 
 describe('ImageAsset', function() {
     it('can serialize out correctly', function() {
