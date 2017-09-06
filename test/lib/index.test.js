@@ -325,7 +325,7 @@ describe('BlogArticle', function() {
             "revisionTag": '2017-04-18T19:54:40.000Z',
 
             "authors": ['Coco'],
-            "published": '2017-04-18T19:54:40.000Z',
+            "datePublished": '2017-04-18T19:54:40.000Z',
         });
     });
 
@@ -389,7 +389,7 @@ describe('NewsAsset', function() {
 
             "authors": ['Merriam', 'Webster'],
             "sourceName": 'Dictionary',
-            "published": '2017-04-18T19:54:40.000Z',
+            "datePublished": '2017-04-18T19:54:40.000Z',
         });
     });
 
