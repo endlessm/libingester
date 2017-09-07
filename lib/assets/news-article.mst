@@ -40,8 +40,8 @@
     <div class="read-more">{{{read_more}}}</div>
 </footer>
 <script type="text/javascript">
-    let metadata = window.contentMetadata;
-    if (metadata) {
+    if (window.contentMetadata) {
+        let metadata = window.contentMetadata;
         let contextLink = document.getElementById('context-link');
         contextLink.innerHTML = metadata.sets
             .map(set => '<a class="eos-show-link" href="' + set.id + '">' +

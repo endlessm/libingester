@@ -40,8 +40,8 @@
     </div>
 </footer>
 <script type="text/javascript">
-    let metadata = window.contentMetadata;
-    if (metadata) {
+    if (window.contentMetadata) {
+        let metadata = window.contentMetadata;
         function links_helper(links_id, featured, separator) {
             let links = document.getElementById(links_id);
             links.innerHTML = metadata.sets
