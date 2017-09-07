@@ -33,8 +33,8 @@
     </section>
 </article>
 <script type="text/javascript">
-    let metadata = window.contentMetadata;
-    if (metadata) {
+    if (window.contentMetadata) {
+        let metadata = window.contentMetadata;
         function links_helper(links_id, featured, separator) {
             let links = document.getElementById(links_id);
             links.innerHTML = metadata.sets
@@ -52,20 +52,20 @@
         }
     }
 
-// Change styling if some elements are empty
-let categories = document.getElementById('article-categories');
-if (categories != null) {
-    if (categories.children.length < 1) {
-        document.getElementById('article-title').classList.add('no-margin-top');
+    // Change styling if some elements are empty
+    let categories = document.getElementById('article-categories');
+    if (categories != null) {
+        if (categories.children.length < 1) {
+            document.getElementById('article-title').classList.add('no-margin-top');
+        }
     }
-}
 
-let article_content = document.getElementById('article-content');
-if (article_content && article_content.children.length < 1) {
-    document.getElementById('article-title').classList.add('less-margin-bottom');
-    document.getElementById('article-support').classList.add('width-full');
-    article_content.parentNode.removeChild(article_content);
-}
+    let article_content = document.getElementById('article-content');
+    if (article_content && article_content.children.length < 1) {
+        document.getElementById('article-title').classList.add('less-margin-bottom');
+        document.getElementById('article-support').classList.add('width-full');
+        article_content.parentNode.removeChild(article_content);
+    }
 </script>
 </body>
 </html>
