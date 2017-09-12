@@ -9,7 +9,9 @@
     <section>
         {{ #main_image }}
         <figure class="main-image">
-            <img data-soma-hint="ImportantImage" data-libingester-asset-id="{{ main_image }}">
+            <a data-soma-widget="ImageLink">
+                <img data-soma-hint="ImportantImage" data-libingester-asset-id="{{ main_image }}">
+            </a>
         </figure>
         {{ /main_image }}
         <div class="outer-content-wrapper">
