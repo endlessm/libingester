@@ -35,6 +35,14 @@ function rmrf (dir) {
     fs.rmdirSync(dir);
 }
 
+function createAssets (n) {
+    let result = [];
+    for (let i=0; i<n; i++) {
+        result.push(new MockAsset());
+    }
+    return result;
+}
+
 function readHatchManifest (hatch) {
     const manifestPath = `./${hatch.get_path()}/hatch_manifest.json`;
     return JSON.parse(fs.readFileSync(manifestPath));
@@ -174,6 +182,22 @@ describe('Hatch', function() {
             hatch.save_asset(fails);
 
             return expectPromiseRejects(hatch.finish());
+        });
+
+        it('fails if more than 90% of assets failed', () => {
+            const assets = createAssets(100);
+            assets.slice(0, 91).forEach(asset => asset.fails_with_error(new Error()));
+            assets.forEach(asset => hatch.save_asset(asset));
+
+            return expectPromiseRejects(hatch.finish());
+        });
+
+        it('passes if 90% or fewer assets failed', () => {
+            const assets = createAssets(100);
+            assets.slice(0, 90).forEach(asset => asset.fails_with_error(new Error()));
+            assets.forEach(asset => hatch.save_asset(asset));
+
+            return hatch.finish();
         });
 
         it('removes failed assets from a successful hatch', () => {
