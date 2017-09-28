@@ -9,7 +9,7 @@
     <div class="article-categories">
         <p id="context-link"></p>
     </div>
-    <div class="article-support-info">
+    <div class="article-support">
         <p class="date-published" id="date-published"></p>
         <p class="source-link">
             <a class="eos-show-link" href="{{canonical_uri}}">
