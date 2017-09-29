@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+ 
+<head>
+    <link rel="stylesheet" type="text/css" href="gallery-image-stylesheet.css">
+</head>
+ 
+<body>
+    <article>
+        <section>
+            <figure class="main-image">
+                <a data-soma-widget="ImageLink">
+                <img data-soma-hint="ImportantImage" data-soma-job-id="a3f1bbc30ed37fde568a6181552de6624ad532c7" src="https://www.fridakahlo.org/images/paintings/the-two-fridas.jpg">
+            </a>
+            </figure>
+            <div class="outer-content-wrapper">
+                <div class="article-categories" id="article-categories"></div>
+                <h1 class="article-title" id="article-title">The Two Fridas</h1>
+                <div class="inner-content-wrapper">
+                    <div class="article-support" id="article-support">
+                        <div class="author" id="author">Frida Kahlo</div>
+                        <div class="date-published" id="published-id"></div>
+                        <div class="read-more">
+                            <a class="eos-show-link" href="https://www.wikiart.org/en/frida-kahlo/the-two-fridas-1939">www.wikiart.org</a>
+                        </div>
+                    </div>
+                    <div class="article-content" id="article-content">
+ 
+ 
+ 
+ 
+ 
+                        <div class="info-line">
+                            <span class="title">Original Title:</span> Las Dos Fridas
+                        </div>
+ 
+                        <div class="info-line">
+                            <span class="title">Date:</span>
+                            <span itemprop="dateCreated">1939</span>
+                        </div>
+ 
+ 
+                        <div class="info-line">
+                            <span class="title">Style:</span>
+                            <span>Naïve Art (Primitivism)</span>
+                        </div>
+ 
+ 
+ 
+                        <div class="info-line">
+                            <span class="title">Genre:</span>
+                            <span itemprop="genre">self-portrait</span>
+                        </div>
+ 
+                        <div class="info-line">
+                            <span class="title">Media:</span> oil, canvas
+                        </div>
+                        <div class="info-line">
+                            <span class="title">Dimensions:</span> 173 x 173.5 cm
+                        </div>
+ 
+ 
+                        <div class="info-line">
+                            <span class="title">Location:</span> Museo de Arte Moderno, Mexico City, Mexico
+                        </div>
+ 
+                        <div class="info-line">
+                            <span class="title">Tags:</span>
+                            <span itemprop="keywords">
+                                                        famous-people,                        Frida-Kahlo,                        female-portraits,                        disease-and-treatment
+                            </span>
+                        </div>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                        <br>
+                        <div class="intro-paragraph">
+                            Created at the same time as her to divorce to Diego Rivera, The Two Fridas is Kahlo’s largest painting. It is believed to be a painting depicting her deep hurt at losing her husband. One Frida sits on the left of the painting; this sis the Frida
+                            that was rejected by Rivera, Her blouse is ripped open, exposing her broken and bleeding heart. The Frida to the right, the one that Rivera still loves, has a heart that is still whole. She holds a small portrait of Rivera
+                            in her hand. After her death, this small portrait of Rivera was found amongst Kahlo’s belongings, and is now on display at the Museo Frida Kahlo in Mexico.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </article>
+    <script type="text/javascript">
+if (window.contentMetadata) {
+    let metadata = window.contentMetadata;
+ 
+    function links_helper(links_id, featured, separator) {
+        let links = document.getElementById(links_id);
+        links.innerHTML = metadata.sets
+            .filter(set => set.featured === featured)
+            .map(set => '<a class="eos-show-link" href="' + set.id + '">' + set.title + '</a>')
+            .join(separator);
+    }
+    links_helper('article-categories', true, ', ');
+    links_helper('tags-links', false, ' ');
+ 
+    if (metadata.published) {
+        let published_date = new Date(metadata.published);
+        let published_elem = document.getElementById('published-id');
+        published_elem.innerHTML = published_date.toLocaleDateString();
+    }
+}
+ 
+// Change styling if some elements are empty
+let categories = document.getElementById('article-categories');
+if (categories != null) {
+    if (categories.children.length < 1) {
+        document.getElementById('article-title').classList.add('no-margin-top');
+    }
+}
+ 
+let article_content = document.getElementById('article-content');
+if (article_content && article_content.children.length < 1) {
+    document.getElementById('article-title').classList.add('less-margin-bottom');
+    document.getElementById('article-support').classList.add('width-full');
+    article_content.parentNode.removeChild(article_content);
+}
+    </script>
+</body>
+ 
+</html>

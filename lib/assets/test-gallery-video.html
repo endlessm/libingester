@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+ 
+<head>
+    <link rel="stylesheet" type="text/css" href="gallery-video-stylesheet.css">
+</head>
+ 
+<body>
+    <article>
+        <section>
+            <div class="main-image-wrapper">
+                <figure class="main-image">
+                    <img data-soma-job-id="e08b903c9df0ff83b5b58d0e6568dc364a9d074e" src="https://www.fridakahlo.org/images/paintings/the-two-fridas.jpg">
+                </figure>
+            </div>
+            <div class="outer-content-wrapper">
+                <div class="article-categories" id="article-categories"></div>
+                <h1 class="article-title" id="article-title">Coral Reef</h1>
+                <div class="inner-content-wrapper">
+                    <div class="article-support" id="article-support">
+                        <div class="author" id="author">Ian Somerhalder</div>
+                        <div class="date-published" id="published-id"></div>
+                        <div class="read-more">
+                            <a class="eos-show-link" href="http://www.conservation.org/nature-is-speaking/Pages/Ian-Somerhalder-Is-Coral-Reef.aspx">www.conservation.org</a>
+                        </div>
+                    </div>
+                    <div class="article-content" id="article-content">
+                        <p>
+                            <strong>Lost coastal ecosystems</strong><br> Due to warmer and more acidic oceans, rising sea levels, overfishing and other threats, as many as 980,000 hectares of coastal ecosystems — an area larger than New York City
+                            — is destroyed each year. What’s worse, the 1-to-4-foot sea-level rise expected by 2100 will only intensify the storm surges and erosion ruining the planet’s coral reefs, shoreline forests and tidal wetlands.
+                            As these ecosystems are damaged and lost, island nations and coastal communities are most at risk.</p>
+                        <p>
+                            <strong>Protectors under siege</strong><br> Coral reefs are vibrant metropolises under the sea, home to more than 25 percent of known marine species. They also help coastal communities resist storm surges: During major storm
+                            events, reefs act as protective shields for vulnerable shorelines. With the ocean continuing to absorb heat and human-generated carbon dioxide at such an alarming rate — and destructive fishing practices running rampant
+                            — virtually all coral reefs could be under threat in the next 30 years.</p>
+                        <p>
+                            <strong>Human impact</strong><br> One out of every seven human beings on Earth lives in a low-lying coastal region, including approximately 500 million people who rely on food sourced from coral reefs. Each year, coral reefs
+                            create an estimated US$ 375 billion in tourism-related jobs, food, shoreline protection, even medicine. In the island waters of Indonesia, Malaysia, Papua New Guinea, Philippines, the Solomon Islands and Timor-Leste —
+                            a region known as the Coral Triangle — these valuable coastal waters provide a living for one-third of the people.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </article>
+    <script type="text/javascript">
+let metadata = window.contentMetadata;
+if (metadata) {
+    function links_helper(links_id, featured, separator) {
+        let links = document.getElementById(links_id);
+        links.innerHTML = metadata.sets
+            .filter(set => set.featured === featured)
+            .map(set => '<a class="eos-show-link" href="' + set.id + '">' + set.title + '</a>')
+            .join(separator);
+    }
+    links_helper('article-categories', true, ', ');
+    links_helper('tags-links', false, ' ');
+ 
+    if (metadata.published) {
+        let published_date = new Date(metadata.published);
+        let published_elem = document.getElementById('published-id');
+        published_elem.innerHTML = published_date.toLocaleDateString();
+    }
+}
+ 
+// Change styling if some elements are empty
+let categories = document.getElementById('article-categories');
+if (categories != null) {
+    if (categories.children.length < 1) {
+        document.getElementById('article-title').classList.add('no-margin-top');
+    }
+}
+ 
+let article_content = document.getElementById('article-content');
+if (article_content && article_content.children.length < 1) {
+    document.getElementById('article-title').classList.add('less-margin-bottom');
+    document.getElementById('article-support').classList.add('width-full');
+    article_content.parentNode.removeChild(article_content);
+}
+    </script>
+</body>
+ 
+</html>
