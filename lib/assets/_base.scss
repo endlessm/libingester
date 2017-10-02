@@ -1,0 +1,118 @@
+@import 'colors';
+@import '_media_link';
+@import 'typography';
+
+$body-line-height: 1.5;
+
+// Remove user agent styles
+figure, blockquote, p, hr {
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 0;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+}
+
+// Semantic elements
+
+html {
+    font-family: $body-font;
+    line-height: $body-line-height;
+    overflow-x: hidden;  // So 100vw divs don't cause a horizontal scrollbar
+}
+
+body {
+    color: lighten(black, 100 - 60);
+    background-color: white;
+}
+
+a {
+    color: $accent-light-color;
+    text-decoration: none;
+
+    &:hover {
+        color: $accent-dark-color;
+    }
+}
+
+p, ul {
+    margin-bottom: 1rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: $primary-dark-color;
+    font-family: $title-font;
+    font-weight: bold;
+    line-height: 1.25;
+    margin-top: 3.0rem;
+    margin-bottom: 0.5rem;
+    + h1, + h2, + h3, + h4, + h5, + h6 {
+        margin-top: 0;
+    }
+}
+
+h1 {
+    font-size: 2.8rem;
+}
+
+h2 {
+    font-size: 2.2rem;
+}
+
+h3 {
+    font-size: 1.7rem;
+}
+
+h4 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+}
+
+h5 {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+}
+
+h6 {
+    font-size: 1rem;
+    line-height: $body-line-height;
+    font-weight: normal;
+    font-style: italic;
+}
+
+// Page features
+
+.article-categories {
+    font-family: $context-font;
+    font-weight: 500;
+    a {
+        color: $primary-light-color;
+        &:hover {
+            color: $primary-dark-color;
+        }
+    }
+}
+
+.article-support {
+    font-family: $support-font;
+}
+
+// Composite resolutions
+
+@media (device-width: 720px) and (device-height: 480px),
+       (device-width: 720px) and (device-height: 576px) {
+    html {
+        font-family: $body-font-composite;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: $title-font-composite;
+    }
+
+    .article-categories a {
+        font-family: $context-font-composite;
+    }
+
+    .article-support {
+        font-family: $support-font-composite;
+    }
+}

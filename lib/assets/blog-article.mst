@@ -7,7 +7,7 @@
 <body>
 <header class="article-information">
     <div class="article-categories" id="article-categories"></div>
-    <div class="article-support-info">
+    <div class="article-support">
         <span class="author">{{ author }}</span>
         &mdash;
         <span class="date-published" id="published-id"></span>

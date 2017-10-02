@@ -1,63 +1,21 @@
-@import '_media_link';
+@import 'base';
 
-$body-font: 'Merriweather' !default;
-$title-font: 'Fira Sans' !default;
-$context-font: 'Fira Sans' !default;
-$support-font: 'Fira Sans' !default;
-$body-font-composite: 'Roboto' !default;
-$title-font-composite: 'Roboto' !default;
-
-$primary-light-color: #5e7790 !default;
-$primary-dark-color: #1b242e !default;
-$accent-light-color: #ff6835 !default;
-$accent-dark-color: #cc532b !default;
-$background-light-color: #e9e9e3 !default;
-$background-dark-color: #ddddd5 !default;
-
-$black60: lighten(black, 100 - 60);
-$body-line-height: 1.5;
 $backdrop-margin: 7.5vw;
 $paper-width: 100vw - 2 * $backdrop-margin;
 
 $compact-max-width: 999px;
 $spacious-min-width: 1500px;
 
-// Remove user agent styles
-figure, blockquote, p, hr {
-    -webkit-margin-before: 0;
-    -webkit-margin-after: 0;
-    -webkit-margin-start: 0;
-    -webkit-margin-end: 0;
-}
-
 html {
     background-color: $background-dark-color;
-    font-family: $body-font;
-    line-height: $body-line-height;
-    overflow-x: hidden;  // So 100vw divs don't cause a horizontal scrollbar
 }
 
 body {
-    color: $black60;
-    background-color: white;
     margin: 100px $backdrop-margin 600px;
     padding-top: 2rem;
 }
 
 // Semantic elements
-
-a {
-    color: $accent-light-color;
-    text-decoration: none;
-
-    &:hover {
-        color: $accent-dark-color;
-    }
-}
-
-p, ul {
-    margin-bottom: 1rem;
-}
 
 figure {
     background-color: $background-light-color;
@@ -71,7 +29,6 @@ figure {
 
 figcaption {
     background-color: $background-light-color;
-    color: $black60;
     font-family: $support-font;
     font-size: 0.8rem;
     line-height: 1rem;
@@ -93,47 +50,6 @@ blockquote {
         align-self: flex-start;
         margin-right: 1rem;
     }
-}
-
-h1, h2, h3, h4, h5, h6 {
-    color: $primary-dark-color;
-    font-family: $title-font;
-    font-weight: bold;
-    line-height: 1.25;
-    margin-top: 3.0rem;
-    margin-bottom: 0.5rem;
-    + h1, + h2, + h3, + h4, + h5, + h6 {
-        margin-top: 0;
-    }
-}
-
-h1 {
-    font-size: 2.8rem;
-}
-
-h2 {
-    font-size: 2.2rem;
-}
-
-h3 {
-    font-size: 1.7rem;
-}
-
-h4 {
-    font-size: 1.4rem;
-    margin-bottom: 0.5rem;
-}
-
-h5 {
-    font-size: 1.2rem;
-    margin-bottom: 0.25rem;
-}
-
-h6 {
-    font-size: 1rem;
-    line-height: $body-line-height;
-    font-weight: normal;
-    font-style: italic;
 }
 
 hr {
@@ -169,7 +85,7 @@ footer {
         }
     }
 
-    .article-support-info {
+    .article-support {
         max-width: 18vw;
     }
 
@@ -183,13 +99,7 @@ footer {
     margin-top: 1rem;
 }
 
-.article-categories {
-    color: $primary-light-color;
-    font-family: $context-font;
-}
-
 .date-published, .source-link, .read-more {
-    color: $black60;
     font-family: $support-font;
 }
 
@@ -198,7 +108,6 @@ footer {
 }
 
 .lede {
-    color: $black60;
     font-style: italic;
     line-height: 1.5;
     margin-top: 1.5rem;
@@ -284,16 +193,8 @@ footer {
 // Composite resolutions
 @media (device-width: 720px) and (device-height: 480px),
        (device-width: 720px) and (device-height: 576px) {
-    html {
-        font-family: $body-font-composite;
-    }
-
     body {
         margin-left: 0;
         margin-right: 0;
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-        font-family: $title-font-composite;
     }
 }
