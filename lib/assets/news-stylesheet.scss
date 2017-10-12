@@ -1,25 +1,17 @@
 @import 'base';
 
-$backdrop-margin: 7.5vw;
-$paper-width: 100vw - 2 * $backdrop-margin;
-
-$compact-max-width: 999px;
 $spacious-min-width: 1500px;
-
-html {
-    background-color: $background-dark-color;
-}
+$compact-max-width: 900px;
 
 body {
-    margin: 100px $backdrop-margin 0px;
-    padding-top: 2rem;
+    margin-top: 66px;
 }
 
 // Semantic elements
 
 figure {
-    background-color: $background-light-color;
-    margin: 3rem 0;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
 
     img {
         width: 100%;
@@ -28,41 +20,23 @@ figure {
 }
 
 figcaption {
-    background-color: $background-light-color;
     font-family: $support-font;
     font-size: 0.8rem;
     line-height: 1rem;
-    padding: 0.8rem 1rem;
+    padding: 0.3rem 0;
+    p {
+        margin-bottom: 0;
+    }
 }
 
 blockquote {
     color: $primary-light-color;
-    display: flex;
-    flex-wrap: wrap;
     font-family: $support-font;
     font-size: 1.5rem;
     font-style: italic;
     line-height: 1.333;
     margin-top: 2rem;
     margin-bottom: 2rem;
-
-    .quote-decoration {
-        align-self: flex-start;
-        margin-right: 1rem;
-    }
-}
-
-hr {
-    height: 1px;
-    border: 0;
-    border-top: 1px solid $background-light-color;
-    padding: 0;
-    margin-top: 3rem;
-    margin-bottom: 2rem;
-}
-
-footer {
-    padding-bottom: 1rem;
 }
 
 // Page features
@@ -75,28 +49,25 @@ footer {
 
     .article-categories {
         flex: 1;
-        max-width: 60vw;
+        max-width: 40vw;
 
-        a {
-            color: $primary-light-color;
-            &:hover {
-                color: $primary-dark-color;
-            }
+        p {
+            display: inline-block;
         }
     }
 
     .article-support {
-        max-width: 18vw;
+        max-width: 20vw;
     }
 
     p {
         margin-bottom: 0;
-        font-weight: 500;
     }
 }
 
 .article-title h1 {
-    margin-top: 1rem;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 .date-published, .source-link, .read-more {
@@ -115,86 +86,122 @@ footer {
 }
 
 .read-more {
+    border-top: 1px solid #DDDDDD;
+    padding-bottom: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-// Responsive
+#default-share-actions {
+    position: fixed;
+    right: 7vw;
+    bottom: 45%;
+    border-radius: 1.4em;
+    padding: 0.7em 0;
+    background-color: transparentize($body-background-color, 1 - 0.70);
+    line-height: 0;
+
+    a {
+        display: block;
+        padding: 0.6em 0.9em;
+        svg {
+            fill: rgba(0, 0, 0, 0.6);
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+        }
+    }
+}
+
+
+// Responsive Elements
 
 // Define all our responsive properties in terms of three parameters, then
 // include this mixin in the various media queries
-@mixin responsive-elements($body-size, $indent: 20.4, $dedent: -10.2) {
-    $real-indent: $paper-width * ($indent / 100);
-    $real-dedent: $paper-width * ($dedent / 100);
-
+@mixin responsive-elements($body-size, $indent, $dedent) {
     html {
         font-size: $body-size;
     }
 
     body {
-        padding-left: $real-indent;
-        padding-right: $real-indent;
+        margin-left: $indent;
+        margin-right: $indent;
     }
 
-    .article-information, .article-title, blockquote {
-        margin-left: $real-dedent;
-        margin-right: $real-dedent;
+    footer {
+        margin-left: -$indent;
+        margin-right: -$indent;
+    }
+
+    figure,
+    .article-information,
+    .article-title h1 {
+        margin-left: $dedent;
+        margin-right: $dedent;
     }
 
     .lede {
-        margin-left: $real-dedent;
-    }
-
-    blockquote {
-        p, cite {
-            flex: calc(100% + #{$real-dedent});
-        }
-
-        .quote-decoration {
-            $size: calc(#{-$real-dedent} - 1rem);
-            flex: $size 0 0;
-            height: $size;
-            width: $size;
-        }
-    }
-
-    footer hr {
-        margin-left: -$real-indent;
-        margin-right: -$real-indent;
+        margin-left: $dedent;
     }
 }
 
-@include responsive-elements($body-size: 20px);
-
-@media (max-width: $compact-max-width) {
-    $blockquote-extra-indent: 10;
-    @include responsive-elements($body-size: 20px, $indent: 10, $dedent: 0);
-
-    blockquote {
-        $real-extra-indent: $paper-width * $blockquote-extra-indent / 100;
-        p, cite {
-            flex: calc(100% - #{$real-extra-indent});
-        }
-
-        .quote-decoration {
-            $size: calc(#{$real-extra-indent} - 1rem);
-            flex: $size 0 0;
-            height: $size;
-            width: $size;
-        }
-    }
-}
+@include responsive-elements($body-size: 20px, $indent: 20vw, $dedent: -4.2vw);
 
 @media (min-width: $spacious-min-width) {
-    @include responsive-elements($body-size: 24px);
+    @include responsive-elements($body-size: 24px, $indent: 24.2vw, $dedent: -4.2vw);
+
+    #default-share-actions {
+        right: 9vw;
+    }
 }
 
-// Composite resolutions
-@media (device-width: 720px) and (device-height: 480px),
-       (device-width: 720px) and (device-height: 576px) {
+@media (max-width: $compact-max-width) {
+    @include responsive-elements($body-size: 20px, $indent: 15vw, $dedent: 0);
+
+    figure {
+        margin-left: -15vw;
+        margin-right: -15vw;
+        figcaption {
+            margin-left: 15vw;
+            margin-right: 15vw;
+        }
+    }
+
+    #default-share-actions {
+        right: 4vw;
+    }
+}
+
+// Composite resolutions        
+@media  (device-width: 720px) and (device-height: 480px),
+        (device-width: 720px) and (device-height: 576px) {
+    @include responsive-elements($body-size: 20px, $indent: 10vw, $dedent: 0);
+
     body {
-        margin-left: 0;
-        margin-right: 0;
+        margin-top: 30px;
+    }
+
+    figure {
+        margin-left: -10vw;
+        margin-right: -10vw;
+        figcaption {
+            margin-left: 10vw;
+            margin-right: 10vw;
+        }
+    }
+
+    .article-information .article-support {
+        max-width: 30vw;
+    }
+
+    #default-share-actions {
+        right: 1.5vw;
+        bottom: 25%;
+        a {
+            padding: 0.5em 0.7em;
+        }
     }
 }
