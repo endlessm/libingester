@@ -5,18 +5,16 @@
 </head>
 
 <body>
-<header class="article-information">
-    <div class="article-categories" id="article-categories"></div>
-    <div class="article-support">
-        <span class="author">{{ author }}</span>
-        &mdash;
-        <span class="date-published" id="published-id"></span>
-    </div>
-</header>
+<div class="article-support">
+    <span class="author">{{ author }}</span>
+    <span class="date-published" id="published-id"></span>
+</div>
+<div id="default-share-actions" class="share-actions"></div>
 <article>
     <header class="article-title">
         <h1>{{ title }}</h1>
     </header>
+    <div class="article-categories" id="article-categories"></div>
     <section>
         {{ #main_image }}
         <figure class="main-image">
@@ -59,6 +57,17 @@
             let published_elem = document.getElementById('published-id');
             published_elem.innerHTML = published_date.toLocaleDateString();
         }
+    }
+    let author_div = document.getElementById('author');
+    let published_div = document.getElementById('published-id');
+    let separator = document.createTextNode(' / ');
+    if (author_div.innerHTML != "" && published_div.innerHTML != "") {
+        console.log('hi');
+        published_div.parentNode.insertBefore(separator, published_div);
+    }
+    let tags_links = document.getElementById('tags-links');
+    if (tags_links && tags_links.children.length < 1) {
+        tags_links.parentNode.removeChild(tags_links);
     }
 </script>
 </body>
