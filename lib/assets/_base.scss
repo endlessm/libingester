@@ -1,8 +1,9 @@
 @import 'colors';
-@import '_media_link';
+@import 'media_link';
 @import 'typography';
 
 $body-line-height: 1.5;
+$body-background-color: white;
 
 // Remove user agent styles
 figure, blockquote, p, hr {
@@ -22,7 +23,7 @@ html {
 
 body {
     color: lighten(black, 100 - 60);
-    background-color: white;
+    background-color: $body-background-color;
 }
 
 a {
@@ -43,8 +44,8 @@ h1, h2, h3, h4, h5, h6 {
     font-family: $title-font;
     font-weight: bold;
     line-height: 1.25;
-    margin-top: 3.0rem;
-    margin-bottom: 0.5rem;
+    margin-top: 1.5em;
+    margin-bottom: 0.8rem;
     + h1, + h2, + h3, + h4, + h5, + h6 {
         margin-top: 0;
     }
@@ -64,35 +65,69 @@ h3 {
 
 h4 {
     font-size: 1.4rem;
-    margin-bottom: 0.5rem;
 }
 
 h5 {
     font-size: 1.2rem;
-    margin-bottom: 0.25rem;
 }
 
 h6 {
     font-size: 1rem;
-    line-height: $body-line-height;
     font-weight: normal;
     font-style: italic;
 }
 
 // Page features
 
+.article-information {
+    font-size: 0.8rem;
+    a, p {
+        font-weight: 500;
+        font-size: 0.8rem;
+    }
+}
+
 .article-categories {
     font-family: $context-font;
-    font-weight: 500;
-    a {
+    a, p {
         color: $primary-light-color;
-        &:hover {
-            color: $primary-dark-color;
-        }
+    }
+    a:hover {
+        color: $primary-dark-color;
     }
 }
 
 .article-support {
+    font-family: $support-font;
+}
+
+.article-title h1 {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+#default-share-actions {
+    position: fixed;
+    right: 0;
+    bottom: 45%;
+    border-radius: 1.4em;
+    padding: 0.7em 0;
+    background-color: transparentize($body-background-color, 1 - 0.70);
+    line-height: 0;
+
+    a {
+        display: block;
+        padding: 0.5em 0.9em;
+        svg {
+            fill: rgba(0, 0, 0, 0.6);
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+        }
+    }
+}
+
+.read-more {
     font-family: $support-font;
 }
 
