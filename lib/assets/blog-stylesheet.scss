@@ -1,12 +1,10 @@
 @import 'base';
 
-$tags-separator-color: #DDDDDD;
+$spacious-min-width: 1500px;
+$compact-max-width: 900px;
 
-$spacious-min-width: 1248px;
 
 body {
-    margin-left: 10vw;
-    margin-right: 30vw;
     padding-top: 66px;
 }
 
@@ -18,15 +16,25 @@ img {
 }
 
 figure {
-    margin: 2rem 0;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    margin-left: -10vw;
+    margin-right: -10vw;
+
+    img {
+        width: 100%;
+        height: auto;
+    }
 }
 
 figcaption {
     font-family: $support-font;
     font-size: 0.8rem;
     line-height: 1rem;
-    padding-bottom: 1rem;
-    margin-top: 0.5rem;
+    padding: 0.3rem 0;
+    p {
+        margin-bottom: 0;
+    }
 }
 
 blockquote {
@@ -37,40 +45,26 @@ blockquote {
     line-height: 1.333;
     margin-top: 2rem;
     margin-bottom: 2rem;
-    margin-right: -20vw;
 }
 
-footer {
-    margin-right: -20vw;
-    padding-top: 1rem;
-}
-
-// Page features
-
-.article-information {
-    display: flex;
-    align-items: flex-start;
-    align-content: flex-start;
-    justify-content: space-between;
-    margin-right: -20vw;
+.article-support,
+.article-categories {
+    text-align: center;
+    font-size: 0.8rem;
+    margin-left: 5vw;
+    margin-right: 5vw;
 }
 
 .article-title h1 {
-    margin-right: -20vw;
     margin-top: 1rem;
-}
-
-.main-image {
-    margin-left: -10vw;
-    margin-right: -30vw;
-
-    figcaption {
-        margin-left: 10vw;
-    }
+    margin-left: -5vw;
+    margin-right: -5vw;
+    text-align: center;
 }
 
 .tags {
     padding: 2rem 0;
+    word-wrap: break-word;
 
     a {
         color: $accent-light-color;
@@ -82,6 +76,7 @@ footer {
         margin-right: 0.3rem;
         border: 1px solid $accent-light-color;
         border-radius: 5px;
+        line-height: 2.3;
 
         &:hover {
             color: $accent-dark-color;
@@ -90,37 +85,83 @@ footer {
     }
 }
 
+footer {
+    padding: 1rem 0;
+}
+
 .read-more {
-    font-family: $support-font;
     padding-top: 1rem;
 }
 
 .tags,
 .read-more {
-    border-top: 1px solid $tags-separator-color;
+    border-top: 1px solid #DDDDDD;
+}
+
+#default-share-actions {
+    right: 7vw;
+    bottom: 80%;
 }
 
 // Responsive
 
-@mixin responsive-elements($body-size) {
+// Define all our responsive properties in terms of four parameters, then
+// include this mixin in the various media queries
+@mixin responsive-elements($body-size, $body-margin-left, $body-margin-right) {
     html {
         font-size: $body-size;
     }
+
+    body {
+        margin-left: $body-margin-left;
+        margin-right: $body-margin-right;
+    }
+
+    .main-image {
+        margin-right: -15vw;
+        margin-left: -15vw;
+        figcaption {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
 }
 
-@include responsive-elements($body-size: 20px);
+@include responsive-elements($body-size: 20px, $body-margin-left: 23vw, $body-margin-right: 23vw);
 
 
 @media (min-width: $spacious-min-width) {
-    @include responsive-elements($body-size: 24px);
+    @include responsive-elements($body-size: 24px, $body-margin-left: 20vw, $body-margin-right: 20vw);
 
-    /* counter the effects from general selectors to align it */
     .main-image {
-        margin-left: 0px;
-        margin-right: -20vw;
-
+        margin-right: -10vw;
+        margin-left: -10vw;
         figcaption {
-            margin-left: 0px;
+            margin-left: 0;
+            margin-right: 0;
         }
+    }
+
+    .article-title h1 {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+@media (max-width: $compact-max-width) {
+    @include responsive-elements($body-size: 20px, $body-margin-left: 15vw, $body-margin-right: 15vw);
+
+    .main-image,
+    figure {
+        margin-left: -15vw;
+        margin-right: -15vw;
+        figcaption {
+            margin-left: 15vw;
+            margin-right: 15vw;
+        }
+    }
+
+    #default-share-actions {
+        right: 4vw;
     }
 }
