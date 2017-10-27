@@ -207,11 +207,12 @@ describe('Hatch', function() {
 
             const succeeds = new MockAsset();
             hatch.save_asset(succeeds);
-            
+
             return hatch.finish().then(() => {
                 const manifest = readHatchManifest(hatch);
-                expect(manifest.assets).to.deep.equal([
-                    { asset_id: succeeds.asset_id },
+                const assetIDs = manifest.assets.map(asset => asset.asset_id);
+                expect(assetIDs).to.deep.equal([
+                     succeeds.asset_id,
                 ]);
             });
         });
@@ -228,8 +229,9 @@ describe('Hatch', function() {
 
             return hatch.finish().then(() => {
                 const manifest = readHatchManifest(hatch);
-                expect(manifest.assets).to.deep.equal([
-                    { asset_id: succeeds.asset_id },
+                const assetIDs = manifest.assets.map(asset => asset.asset_id);
+                expect(assetIDs).to.deep.equal([
+                     succeeds.asset_id,
                 ]);
             });
         });
@@ -248,13 +250,46 @@ describe('Hatch', function() {
 
             return hatch.finish().then(() => {
                 const manifest = readHatchManifest(hatch);
-                expect(manifest.assets).to.deep.equal([
-                    { asset_id: succeeds.asset_id },
+                const assetIDs = manifest.assets.map(asset => asset.asset_id);
+                expect(assetIDs).to.deep.equal([
+                     succeeds.asset_id,
                 ]);
             });
         });
     });
+
+    describe('builds hierarchy', () => {
+        beforeEach(() => {
+            hatch = new libingester.Hatch("abcd", "en", { argv: ["--no-tgz"] });
+        });
+
+        it('only assigns parent assets the "isToplevel" attribute', () => {
+            const p1 = new MockAsset();
+            const p2 = new MockAsset();
+            const c1 = new MockAsset();
+            const c2 = new MockAsset();
+            const c3 = new MockAsset();
+
+            p1.set_dependent_assets([c1, c2]);
+            p2.set_dependent_assets([c3]);
+            [p1, p2, c1, c2, c3].forEach(a => hatch.save_asset(a));
+
+            return hatch.finish().then(() => {
+                const manifest = readHatchManifest(hatch);
+                expect(findAsset(manifest, p1).isToplevel).to.be.true;
+                expect(findAsset(manifest, p2).isToplevel).to.be.true;
+
+                expect(findAsset(manifest, c1).isToplevel).to.be.false;
+                expect(findAsset(manifest, c2).isToplevel).to.be.false;
+                expect(findAsset(manifest, c3).isToplevel).to.be.false;
+            });
+        });
+    });
 });
+
+function findAsset (manifest, asset) {
+    return manifest.assets.find(asset => asset.asset_id === asset.asset_id);
+}
 
 function expectPromiseRejects (p) {
     return p.then(() => {

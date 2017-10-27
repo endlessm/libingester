@@ -8,14 +8,11 @@
 <article>
     <section>
         <div class="main-image-wrapper">
+            <a class="media-link video" data-soma-widget="VideoLink" data-soma-job-id="{{ main_video }}">
             {{ #main_image }}
-            <a data-soma-widget="ImageLink" class="media-link video">
-                <img data-soma-hint="ImportantImage" data-libingester-asset-id="{{ main_image }}">
-            </a>
+                <img data-soma-hint="ImportantImage" data-soma-job-id="{{ main_image }}">
             {{ /main_image }}
-            {{ ^main_image }}
-            <a data-soma-widget="VideoLink" class="media-link video"></a>
-            {{ /main_image}}
+            </a>
         </div>
         <div class="outer-content-wrapper">
             <div class="article-categories" id="article-categories"></div>
