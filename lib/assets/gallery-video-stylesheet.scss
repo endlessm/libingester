@@ -53,17 +53,13 @@ h1 {
 
 // Page features
 
-.main-image {
-    margin: auto;
-    max-width: 950px;
-    img {
-        vertical-align: middle;
-    }
-}
-
 .main-image-wrapper {
     background-color: black;
     position: relative;
+    img {
+        display: block;
+        margin: auto;
+    }
 }
 
 .play-button-wrapper {
