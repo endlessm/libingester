@@ -23,8 +23,11 @@
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><path style="opacity:0.6;fill:white;" d="M 30.6,14 7.6,0.4 c -1.8,-1 -3.6,-0.2 -3.6,2 v 27.2 c 0,2.2 1.8,3 3.6,2 L 30.6,18 c 1.8,-1.2 1.8,-2.8 0,-4 z" /></svg>');
 }
 
-.media-link.audio:hover:after,
-.media-link.video:hover:after {
-  // Shows an opaque "play" icon
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><path style="fill:white;" d="M 30.6,14 7.6,0.4 c -1.8,-1 -3.6,-0.2 -3.6,2 v 27.2 c 0,2.2 1.8,3 3.6,2 L 30.6,18 c 1.8,-1.2 1.8,-2.8 0,-4 z" /></svg>');
+.media-link.audio:hover,
+.media-link.video:hover {
+  cursor: pointer;
+  &:after {
+    // Shows an opaque "play" icon
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><path style="fill:white;" d="M 30.6,14 7.6,0.4 c -1.8,-1 -3.6,-0.2 -3.6,2 v 27.2 c 0,2.2 1.8,3 3.6,2 L 30.6,18 c 1.8,-1.2 1.8,-2.8 0,-4 z" /></svg>');
+  }
 }
