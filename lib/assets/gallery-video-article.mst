@@ -8,7 +8,7 @@
 <article>
     <section>
         <div class="main-image-wrapper">
-            <a class="media-link video" data-soma-widget="VideoLink" data-soma-job-id="{{ main_video }}">
+            <a class="media-link video main-image-link" data-soma-widget="VideoLink" data-soma-job-id="{{ main_video }}">
             {{ #main_image }}
                 <img data-soma-hint="ImportantImage" data-soma-job-id="{{ main_image }}">
             {{ /main_image }}
