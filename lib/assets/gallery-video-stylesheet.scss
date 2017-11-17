@@ -59,10 +59,15 @@ h1 {
     img {
         display: block;
         margin: auto;
-        width: 100%;
+        width: auto;
+        min-height: inherit;
+        max-height: inherit;
+        max-width: inherit;
     }
     .main-image-link {
-        width: 100%;
+        display: block;
+        max-height: 432px;
+        max-width: 100%;
     }
 }
 
