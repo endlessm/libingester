@@ -287,8 +287,8 @@ describe('Hatch', function() {
     });
 });
 
-function findAsset (manifest, asset) {
-    return manifest.assets.find(asset => asset.asset_id === asset.asset_id);
+function findAsset (manifest, sought) {
+    return manifest.assets.find(asset => sought.asset_id === asset.asset_id);
 }
 
 function expectPromiseRejects (p) {
