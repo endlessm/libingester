@@ -297,6 +297,15 @@ function expectPromiseRejects (p) {
     }, () => {});
 }
 
+describe('MockAsset', function() {
+    it('can set tags', function() {
+        const asset = new MockAsset();
+        asset.set_tags(['some', 'tags']);
+        const metadata = asset.to_metadata();
+        expect(metadata['tags']).to.deep.equal(['some', 'tags']);
+    });
+});
+
 describe('ImageAsset', function() {
     it('can serialize out correctly', function() {
         const asset = new libingester.ImageAsset();
@@ -469,4 +478,9 @@ describe('NewsAsset', function() {
         // Regex handles how libsass might minify the rendered CSS
         expect(metadata['document']).to.match(/\*\s*{\s*color:\s*red;?\s*}/);
     });
+
+    it('cannot use set_tags', function() {
+        expect(asset.set_tags).to.throw();
+    });
+
 });
