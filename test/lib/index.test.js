@@ -405,6 +405,12 @@ describe('BlogArticle', function() {
         // Regex handles how libsass might minify the rendered CSS
         expect(metadata['document']).to.match(/\*\s*{\s*color:\s*red;?\s*}/);
     });
+    it('cleans newlines from synopsis', function() {
+        asset.set_synopsis('This is a line.\nThis is the same line.\n');
+        asset.render();
+        const metadata = asset.to_metadata();
+        expect(metadata['synopsis']).to.equal('This is a line. This is the same line.');
+    });
 });
 
 describe('NewsAsset', function() {
