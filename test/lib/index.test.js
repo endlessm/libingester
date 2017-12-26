@@ -304,6 +304,11 @@ describe('MockAsset', function() {
         const metadata = asset.to_metadata();
         expect(metadata['tags']).to.deep.equal(['some', 'tags']);
     });
+
+    it('can set null synopsis', function() {
+        const asset = new MockAsset();
+        expect(() => { asset.set_synopsis(undefined) }).to.not.throw();
+    });
 });
 
 describe('ImageAsset', function() {
