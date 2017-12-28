@@ -1,6 +1,6 @@
 {
   "name": "libingester",
-  "version": "2.2.42",
+  "version": "2.2.43",
   "license": "UNLICENSED",
   "dependencies": {
     "aws-sdk": "^2.23.0",
