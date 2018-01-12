@@ -1,7 +1,6 @@
 @import 'base';
 
 $backdrop-margin: 10vw;
-$supplementary-height: 600px;
 
 $spacious-min-width: 1248px;
 $compressed-max-width: 900px;
@@ -11,7 +10,7 @@ html {
 }
 
 body {
-    margin: 100px $backdrop-margin 600px;
+    margin: 100px $backdrop-margin 0px;
     min-width: 300px;
 }
 
