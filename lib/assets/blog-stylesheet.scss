@@ -1,6 +1,5 @@
 @import 'base';
 
-$supplementary-height: 600px;
 $tags-separator-color: #DDDDDD;
 
 $spacious-min-width: 1248px;
@@ -9,7 +8,6 @@ body {
     margin-left: 10vw;
     margin-right: 30vw;
     padding-top: 66px;
-    padding-bottom: $supplementary-height;
 }
 
 // Semantic elements
