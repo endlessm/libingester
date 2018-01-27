@@ -20,6 +20,7 @@
         </p>
     </div>
 </header>
+<div id="default-share-actions" class="share-actions"></div>
 <article>
     <header class="article-title">
         <h1>{{title}}</h1>
@@ -38,7 +39,6 @@
     </section>
 </article>
 <footer>
-    <hr>
     <div class="read-more">{{{read_more}}}</div>
 </footer>
 <script type="text/javascript">
