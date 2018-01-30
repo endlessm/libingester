@@ -160,22 +160,20 @@ describe('download_img', function() {
 describe('fetch_html', () => {
     const doctype = '<!DOCTYPE html>';
 
-    it('works', done => {
+    it('works', () => {
         const test_url = 'https://creativecommons.org/blog';
         return util.fetch_html(test_url).then(result => {
             expect(result.html().substring(0, doctype.length)).to.equal(doctype);
-        })
-        .finally(done);
+        });
     });
 
-    it('can handle gzipped responses', done => {
+    it('can handle gzipped responses', () => {
         const test_url = 'https://www.kapanlagi.com/' +
                         'intermezzone/' +
                         'bule-amerika-ini-nyoba-makan-buah-duku-ekspresinya-nggak-nahan-aee243.html';
         return util.fetch_html(test_url).then((result) => {
             expect(result.html().substring(0, doctype.length)).to.equal(doctype);
-        })
-        .finally(done);
+        });
     });
 });
 
