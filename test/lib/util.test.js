@@ -155,17 +155,27 @@ describe('download_img', function() {
     });
 });
 
-// FIXME this text intermittently fails because it reaches out to an external
-// server. We should replace it with gzipped content served locally
+// FIXME these tests intermittently fail because they reach out to external
+// servers. We should replace them with content served locally
 describe('fetch_html', () => {
-    it('can handle gzipped responses', () => {
+    const doctype = '<!DOCTYPE html>';
+
+    it('works', done => {
+        const test_url = 'https://creativecommons.org/blog';
+        return util.fetch_html(test_url).then(result => {
+            expect(result.html().substring(0, doctype.length)).to.equal(doctype);
+        })
+        .finally(done);
+    });
+
+    it('can handle gzipped responses', done => {
         const test_url = 'https://www.kapanlagi.com/' +
                         'intermezzone/' +
                         'bule-amerika-ini-nyoba-makan-buah-duku-ekspresinya-nggak-nahan-aee243.html';
-        const doctype = '<!DOCTYPE html>';
         return util.fetch_html(test_url).then((result) => {
             expect(result.html().substring(0, doctype.length)).to.equal(doctype);
-        });
+        })
+        .finally(done);
     });
 });
 
