@@ -157,8 +157,9 @@ describe('download_img', function() {
 
 // FIXME these tests intermittently fail because they reach out to external
 // servers. We should replace them with content served locally
-describe('fetch_html', () => {
+describe('fetch_html', function () {
     const doctype = '<!DOCTYPE html>';
+    this.timeout(5000);
 
     it('works', () => {
         const test_url = 'https://creativecommons.org/blog';
