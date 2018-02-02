@@ -4,7 +4,9 @@ libingester
 This library is a tool for creation of packaged website data ("hatches") that can then be used in the SOMA pipeline.
 
 ### Usage
-See examples in `examples/` directory.
+API documentation: https://endlessm.github.io/libingester/
+
+Also see the examples in the `examples/` directory.
 
 ### Previewing hatches
 - Installed as library:
