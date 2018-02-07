@@ -16,7 +16,7 @@
     "aws-sdk": "^2.23.0",
     "bootstrap": "^4.0.0-beta",
     "cheerio": "^0.22.0",
-    "electron": "^1.4.1",
+    "electron": "^1.8.2",
     "feedparser": "^2.2.0",
     "file-type": "^6.1.0",
     "fs-extra": "^2.0.0",
