@@ -1,7 +1,7 @@
 {
   "name": "libingester",
   "description": "Library for creation of packaged website data ('hatches').",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "license": "LGPL 2.1",
   "homepage": "https://github.com/endlessm/libingester",
   "author": "Endless Mobile Inc",
@@ -16,7 +16,7 @@
     "aws-sdk": "^2.23.0",
     "bootstrap": "^4.0.0-beta",
     "cheerio": "^0.22.0",
-    "electron": "^1.4.1",
+    "electron": "^1.8.2",
     "feedparser": "^2.2.0",
     "file-type": "^6.1.0",
     "fs-extra": "^2.0.0",
