@@ -257,6 +257,34 @@
               
                 
                 <li><a
+                  href='#videoarticle'
+                  class=" toggle-sibling">
+                  VideoArticle
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#videoarticleset_author'
+                        class='regular pre-open'>
+                        #set_author
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
                   href='#newsarticle'
                   class=" toggle-sibling">
                   NewsArticle
@@ -2110,6 +2138,138 @@ No other methods should be called on the asset after calling <code>render()</cod
   
   
 
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+</section>
+
+          
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='videoarticle'>
+      VideoArticle
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>A simple wrapper over VideoAsset that should be used for toplevel videos.</p>
+<p>This asset type is for videos that aren't embedded as part of another
+piece of content, but should instead be directly accessible from
+content listings and search results. For instance, if you were building
+an app where the only content was videos and those videos required no
+other context other than some displayable metadata such as the
+authors and a brief synopsis, then you should use this asset type.</p>
+<p>In the past, developers used GalleryVideoArticle, which wrapped
+the video in another HTML page. That asset type is now deprecated
+since apps are capable of displaying the video and its corresponding
+metadata correctly without the need for a page in between.</p>
+
+
+  <div class='pre p1 fill-light mt0'>new VideoArticle()</div>
+  
+  
+    <p>
+      Extends
+      
+        <a href="#videoasset">VideoAsset</a>
+      
+    </p>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='videoarticleset_author'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>set_author(value)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Set the author of this document to the given value.
+The author should be the "creator" of the video, being
+the person or organization responsible for its production.</p>
+
+
+  <div class='pre p1 fill-light mt0'>set_author(value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    The name of the author.
+
+          </div>
+          
+        </div>
+      
+    </div>
   
 
   
