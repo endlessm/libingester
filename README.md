@@ -8,12 +8,6 @@ API documentation: https://endlessm.github.io/libingester/
 
 Also see the examples in the `examples/` directory.
 
-### Previewing hatches
-- Installed as library:
- - `node_modules/.bin/hatch-preview <path>`
-- From this repo
- - `./previewer/bin/hatch-preview <path>`
-
 ### License
 LGPL v2.1
 

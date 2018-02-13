@@ -1,8 +1,5 @@
 {
     "esversion": 6,
-    "globals": {
-        "jest": true
-    },
     "jasmine": true,
     "node": true
 }
