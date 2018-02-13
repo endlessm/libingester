@@ -172,13 +172,16 @@ describe('Hatch', function() {
     });
 
     describe('handles failed assets', () => {
+        let expectedError;
         beforeEach(() => {
             hatch = new libingester.Hatch("abcd", "en", { argv: ["--no-tgz"] });
+            expectedError = new Error('expected error');
+            expectedError.stack = '';
         });
 
         it('fails if all assets failed', () => {
             const fails = new MockAsset();
-            fails.fails_with_error(new Error());
+            fails.fails_with_error(expectedError);
             hatch.save_asset(fails);
 
             return expectPromiseRejects(hatch.finish());
@@ -186,7 +189,8 @@ describe('Hatch', function() {
 
         it('fails if more than 90% of assets failed', () => {
             const assets = createAssets(100);
-            assets.slice(0, 91).forEach(asset => asset.fails_with_error(new Error()));
+            assets.slice(0, 91).forEach(asset =>
+                asset.fails_with_error(expectedError));
             assets.forEach(asset => hatch.save_asset(asset));
 
             return expectPromiseRejects(hatch.finish());
@@ -194,7 +198,8 @@ describe('Hatch', function() {
 
         it('passes if 90% or fewer assets failed', () => {
             const assets = createAssets(100);
-            assets.slice(0, 90).forEach(asset => asset.fails_with_error(new Error()));
+            assets.slice(0, 90).forEach(asset =>
+                asset.fails_with_error(expectedError));
             assets.forEach(asset => hatch.save_asset(asset));
 
             return hatch.finish();
@@ -202,7 +207,7 @@ describe('Hatch', function() {
 
         it('removes failed assets from a successful hatch', () => {
             const fails = new MockAsset();
-            fails.fails_with_error(new Error());
+            fails.fails_with_error(expectedError);
             hatch.save_asset(fails);
 
             const succeeds = new MockAsset();
@@ -220,7 +225,7 @@ describe('Hatch', function() {
         it('fails an asset if one of its dependent assets fails', () => {
             const root = new MockAsset();
             const child = new MockAsset();
-            child.fails_with_error(new Error());
+            child.fails_with_error(expectedError);
             root.set_dependent_assets([child]);
 
             // add a successful asset to prevent the hatch from failing
@@ -240,7 +245,7 @@ describe('Hatch', function() {
             const root = new MockAsset();
             const child1 = new MockAsset();
             const child2 = new MockAsset();
-            child1.fails_with_error(new Error());
+            child1.fails_with_error(expectedError);
             root.set_dependent_assets([child1, child2]);
 
             // add a successful asset to prevent the hatch from failing
