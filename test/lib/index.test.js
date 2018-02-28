@@ -93,7 +93,7 @@ describe('Hatch', function() {
     describe('argv no-tgz option', function() {
         it('does not blow up when no-tgz arg is missing', function() {
             // Implicit non-exception
-            hatch = new libingester.Hatch("aacd", "en", { argv: ["--tgz", "/some/path"] });
+            hatch = new libingester.Hatch("aacd", "en", { argv: ["/some/path"] });
         });
 
         it('does not blow up when no-tgz arg is at the end', function() {
