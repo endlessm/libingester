@@ -171,6 +171,20 @@ describe('Hatch', function() {
         });
     });
 
+    describe('argv urls option', function() {
+        it('null when urls arg is missing', function() {
+            hatch = new libingester.Hatch("aacd", "en", { argv: ["/some/path"] });
+            expect(hatch.get_urls()).to.be.a('null');
+        });
+        it('can process urls correctly from passed in argv', function() {
+            const argv = ["--urls", "https://foo.com", "https://bar.com"];
+            hatch = new libingester.Hatch("abcd", "en",
+                                          { argv: argv });
+            expect(hatch.get_urls()).to.have.members(["https://foo.com",
+                                                      "https://bar.com"]);
+        });
+    });
+
     describe('handles failed assets', () => {
         let expectedError;
         beforeEach(() => {
