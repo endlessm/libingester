@@ -93,7 +93,7 @@ describe('Hatch', function() {
     describe('argv no-tgz option', function() {
         it('does not blow up when no-tgz arg is missing', function() {
             // Implicit non-exception
-            hatch = new libingester.Hatch("aacd", "en", { argv: ["--tgz", "/some/path"] });
+            hatch = new libingester.Hatch("aacd", "en", { argv: ["/some/path"] });
         });
 
         it('does not blow up when no-tgz arg is at the end', function() {
@@ -168,6 +168,20 @@ describe('Hatch', function() {
             expect(fs.lstatSync(targetDir).isDirectory()).to.be.equal(true);
 
             hatch = new libingester.Hatch("abcd", "en", { argv: ["--path", targetDir] });
+        });
+    });
+
+    describe('argv urls option', function() {
+        it('null when urls arg is missing', function() {
+            hatch = new libingester.Hatch("aacd", "en", { argv: ["/some/path"] });
+            expect(hatch.get_urls()).to.be.a('null');
+        });
+        it('can process urls correctly from passed in argv', function() {
+            const argv = ["--urls", "https://foo.com", "https://bar.com"];
+            hatch = new libingester.Hatch("abcd", "en",
+                                          { argv: argv });
+            expect(hatch.get_urls()).to.have.members(["https://foo.com",
+                                                      "https://bar.com"]);
         });
     });
 
