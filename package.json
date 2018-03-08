@@ -1,7 +1,7 @@
 {
   "name": "libingester",
   "description": "Library for creation of packaged website data ('hatches').",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/endlessm/libingester",
   "author": "Endless Mobile Inc",
