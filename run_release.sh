@@ -1,8 +1,19 @@
-#!/bin/bash
+#!/bin/bash -e
 
-set -e
+usage="Usage: npm run release -- SEMVER"
+
+if [ $# -ne 1 ]; then
+    echo 'One single argument is needed'
+    echo $usage
+fi
 
 npm_version_params=$*
+
+read -p "Are you sure you want to release? (y/n) " -n 1 -r
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 0;
+fi
+echo
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 if [[ "$current_branch" != "master" ]]; then
@@ -12,7 +23,6 @@ fi
 
 new_tag=$(npm version $npm_version_params)
 npm run docs:publish
-git push
-git push origin $new_tag
+git push origin --tags master
 npm publish
 echo "libingester $new_tag Released!"
