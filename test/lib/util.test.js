@@ -11,57 +11,127 @@ const libingester = require('../../lib/index');
 
 const now = Date.now();
 
-const FEED_A = [
-    {pubdate: new Date(now - 30 * 60000), // 30 mins ago
-     link: 'http://my-site.com/1'},
-    {pubdate: new Date(now - 120 * 60000), // 2 hs ago
-     link: 'http://my-site.com/2'},
-    {pubdate: new Date(now - 86400000), // 1 day ago
-     link: 'http://my-site.com/3'},
-    {pubdate: new Date(now - 5 * 86400000), // 5 days ago
-     link: 'http://my-site.com/4'},
-];
+const FEED_SIMPLE = {
+    items: [
+        {pubdate: new Date(now - 30 * 60000), // 30 mins ago
+         link: 'http://simple-site.com/article-d'},
+        {pubdate: new Date(now - 120 * 60000), // 2 hs ago
+         link: 'http://simple-site.com/article-c'},
+        {pubdate: new Date(now - 86400000), // 1 day ago
+         link: 'http://simple-site.com/article-b'},
+        {pubdate: new Date(now - 5 * 86400000), // 5 days ago
+         link: 'http://simple-site.com/article-a'},
+    ],
+    meta: {}
+};
 
-const FEED_A_PAGE_2 = [
-    {pubdate: new Date(now - 5 * 86400000 - 2 * 60 * 60000), // 5 days and 2 hs ago
-     link: 'http://my-site.com/foo'},
-    {pubdate: new Date(now - 5 * 86400000 - 8 * 60 * 60000), // 5 days and 8 hs ago
-     link: 'http://my-site.com/bar'},
-    {pubdate: new Date(now - 5 * 86400000 - 12 * 60 * 60000), // 5 days and 12 hs ago
-     link: 'http://my-site.com/baz'},
-];
+const FEED_SIMPLE_2 = {
+    items: [
+        {pubdate: new Date(now - 12 * 60000), // 12 mins ago
+         link: 'https://simple2.com/5'},
+        {pubdate: new Date(now - 25 * 60000), // 25 mins ago
+         link: 'https://simple2.com/4'},
+        {pubdate: new Date(now - 40 * 60000), // 40 mins ago
+         link: 'https://simple2.com/3'},
+        {pubdate: new Date(now - 86400000 - 2 * 60 * 60000), // 1 day and 2 hs ago
+         link: 'https://simple2.com/2'},
+        {pubdate: new Date(now - 30 * 86400000), // 30 days ago
+         link: 'https://simple2.com/1'},
+    ],
+    meta: {}
+};
 
-const FEED_A_PAGE_3 = [
-    {pubdate: new Date(now - 7 * 86400000 - 3 * 60 * 60000), // 7 days and 3 hs ago
-     link: 'http://my-site.com/x'},
-    {pubdate: new Date(now - 7 * 86400000 - 4 * 60 * 60000), // 7 days and 4 hs ago
-     link: 'http://my-site.com/y'},
-    {pubdate: new Date(now - 7 * 86400000 - 5 * 60 * 60000), // 7 days and 5 hs ago
-     link: 'http://my-site.com/z'},
-];
+const FEED_A_PAGE_1 = {
+    items: [
+        {pubdate: new Date(now - 30 * 60000), // 30 mins ago
+         link: 'http://my-site.com/1'},
+        {pubdate: new Date(now - 120 * 60000), // 2 hs ago
+         link: 'http://my-site.com/2'},
+        {pubdate: new Date(now - 86400000), // 1 day ago
+         link: 'http://my-site.com/3'},
+        {pubdate: new Date(now - 5 * 86400000), // 5 days ago
+         link: 'http://my-site.com/4'},
+    ],
+    meta: {}
+};
 
-const FEED_B = [
-    {pubdate: new Date(now - 12 * 60000), // 12 mins ago
-     link: 'http://feed-b/1'},
-    {pubdate: new Date(now - 25 * 60000), // 25 mins ago
-     link: 'http://feed-b/2'},
-    {pubdate: new Date(now - 40 * 60000), // 40 mins ago
-     link: 'http://feed-b/3'},
-    {pubdate: new Date(now - 86400000 - 2 * 60 * 60000), // 1 day and 2 hs ago
-     link: 'http://feed-b/4'},
-    {pubdate: new Date(now - 30 * 86400000), // 30 days ago
-     link: 'http://feed-b/4'},
-];
+const FEED_A_PAGE_2 = {
+    items: [
+        {pubdate: new Date(now - 5 * 86400000 - 2 * 60 * 60000), // 5 days and 2 hs ago
+         link: 'http://my-site.com/foo'},
+        {pubdate: new Date(now - 5 * 86400000 - 8 * 60 * 60000), // 5 days and 8 hs ago
+         link: 'http://my-site.com/bar'},
+        {pubdate: new Date(now - 5 * 86400000 - 12 * 60 * 60000), // 5 days and 12 hs ago
+         link: 'http://my-site.com/baz'},
+    ],
+    meta: {}
+};
 
-const FEED_DUPS = [
-    {pubdate: new Date(now - 7 * 60000), // 7 mins ago
-     link: 'http://feed-dup/one'},
-    {pubdate: new Date(now - 9 * 60000), // 9 mins ago
-     link: 'http://feed-dup/two'},
-    {pubdate: new Date(now - 12 * 60000), // 12 mins ago, duplicated
-     link: 'http://feed-dup/one'},
-    {pubdate: new Date(now - 18 * 60000), // 18 mins ago, duplicated
-     link: 'http://feed-dup/two'},
+const FEED_A_PAGE_3 = {
+    items: [
+        {pubdate: new Date(now - 7 * 86400000 - 3 * 60 * 60000), // 7 days and 3 hs ago
+         link: 'http://my-site.com/x'},
+        {pubdate: new Date(now - 7 * 86400000 - 4 * 60 * 60000), // 7 days and 4 hs ago
+         link: 'http://my-site.com/y'},
+        {pubdate: new Date(now - 7 * 86400000 - 5 * 60 * 60000), // 7 days and 5 hs ago
+         link: 'http://my-site.com/z'},
+    ],
+    meta: {}
+};
+
+const FEED_A_PAGE_4 = {items: [], meta: {}};
+
+const FEED_B_PAGE_1 = {
+    items: [
+        {pubdate: new Date(now - 3 * 60 * 60000 - 20 * 60000), // 3 hs 20 min ago
+         link: 'http://another.com/f'},
+        {pubdate: new Date(now - 5 * 60 * 60000 - 45 * 60000), // 5 hs 45 min ago
+         link: 'http://another.com/e'},
+        {pubdate: new Date(now - 86400000 - 3 * 60 * 60000), // 1 days and 3 hs ago
+         link: 'http://another.com/d'},
+    ],
+    meta: {generator: 'https://wordpress.org/'}
+};
+const FEED_B_PAGE_2 = {
+    items: [
+        {pubdate: new Date(now - 86400000 - 7 * 60 * 60000), // 1 days and 7 hs ago
+         link: 'http://another.com/c'},
+        {pubdate: new Date(now - 2 * 86400000 - 12 * 60 * 60000), // 2 days and 12 hs ago
+         link: 'http://another.com/b'},
+        {pubdate: new Date(now - 27 * 86400000), // 27 days ago
+         link: 'http://another.com/a'}
+    ],
+    meta: {}
+};
+const FEED_B_PAGE_3 = {items: [], meta: {}};
+
+const FEED_DUPS = {
+    items: [
+        {pubdate: new Date(now - 7 * 60000), // 7 mins ago
+         link: 'http://feed-dup/one'},
+        {pubdate: new Date(now - 9 * 60000), // 9 mins ago
+         link: 'http://feed-dup/two'},
+        {pubdate: new Date(now - 12 * 60000), // 12 mins ago, duplicated
+         link: 'http://feed-dup/one'},
+        {pubdate: new Date(now - 18 * 60000), // 18 mins ago, duplicated
+         link: 'http://feed-dup/two'},
+    ],
+    meta: {}
+};
+
+FEED_PAGES = [
+    ['http://simple-site.com/rss', FEED_SIMPLE],
+    ['https://simple2.com/rss', FEED_SIMPLE_2],
+    ['http://feed-with-dups', FEED_DUPS],
+    ['http://my-site.com/rss', FEED_A_PAGE_1],
+    ['http://my-site.com/rss?paged=1', FEED_A_PAGE_1],
+    ['http://my-site.com/rss?paged=2', FEED_A_PAGE_2],
+    ['http://my-site.com/rss?paged=3', FEED_A_PAGE_3],
+    ['http://my-site.com/rss?paged=4', FEED_A_PAGE_4],
+    ['http://another.com/feed', FEED_B_PAGE_1],
+    ['http://another.com/feed?paged=1', FEED_B_PAGE_1],
+    ['http://another.com/feed?paged=2', FEED_B_PAGE_2],
+    ['http://another.com/feed?paged=3', FEED_B_PAGE_3],
 ];
 
 describe('encode_uri', function() {
@@ -257,19 +327,49 @@ describe('get_embedded_video_asset', () => {
     });
 });
 
-describe('test_rss_simple', () => {
+describe.only('test_fetch_rss_entries', () => {
     let restore;
+    let feed_array;
+    let feed_paginated;
+    let feed_wordpress;
+    let feed_array_paged;
+    let feed_array_mixed;
+    let feed_array_mixed_wordpress;
+
     beforeEach(function() {
+        feed_array = ['http://simple-site.com/rss', 'https://simple2.com/rss'];
+        feed_paginated = util.create_wordpress_paginator('http://my-site.com/rss');
+        feed_wordpress = 'http://another.com/feed';
+        feed_array_paged = util.create_wordpress_paginator(['http://my-site.com/rss',
+                                                            'http://another.com/feed']);
+        // feed_array_paged = [util.create_wordpress_paginator('http://my-site.com/rss'),
+        //                     util.create_wordpress_paginator('http://another.com/feed')];
+        feed_array_mixed = ['http://simple-site.com/rss',
+                            util.create_wordpress_paginator('http://another.com/feed')];
+        feed_array_mixed_wordpress = ['http://simple-site.com/rss',
+                                      'http://another.com/feed'];
+
         const stub_fetch =  sinon.stub();
-        stub_fetch.withArgs('http://my-site.com/rss').resolves({items: FEED_A, meta: []});
-        stub_fetch.withArgs('http://feed-with-dups').resolves({items: FEED_DUPS, meta: []});
+        stub_fetch.withArgs('http://simple-site.com/rss').resolves(FEED_SIMPLE);
+        stub_fetch.withArgs('https://simple2.com/rss').resolves(FEED_SIMPLE_2);
+        stub_fetch.withArgs('http://feed-with-dups').resolves(FEED_DUPS);
+        stub_fetch.withArgs('http://my-site.com/rss').resolves(FEED_A_PAGE_1);
+        stub_fetch.withArgs('http://my-site.com/rss?paged=1').resolves(FEED_A_PAGE_1);
+        stub_fetch.withArgs('http://my-site.com/rss?paged=2').resolves(FEED_A_PAGE_2);
+        stub_fetch.withArgs('http://my-site.com/rss?paged=3').resolves(FEED_A_PAGE_3);
+        stub_fetch.withArgs('http://my-site.com/rss?paged=4').resolves(FEED_A_PAGE_4);
+        stub_fetch.withArgs('http://another.com/feed').resolves(FEED_B_PAGE_1);
+        stub_fetch.withArgs('http://another.com/feed?paged=1').resolves(FEED_B_PAGE_1);
+        stub_fetch.withArgs('http://another.com/feed?paged=2').resolves(FEED_B_PAGE_2);
+        stub_fetch.withArgs('http://another.com/feed?paged=3').resolves(FEED_B_PAGE_3);
+
         restore = util.__set__('_fetch_rss_json', stub_fetch);
     });
     afterEach(() => {
         restore();
     });
     it('works with default settings', () => {
-        return util.fetch_rss_entries('http://my-site.com/rss').then(items => {
+        return util.fetch_rss_entries('http://simple-site.com/rss').then(items => {
             expect(items.length).to.equal(2);
         });
     });
@@ -279,91 +379,78 @@ describe('test_rss_simple', () => {
         });
     });
     it('can specify max days old', () => {
-        return util.fetch_rss_entries('http://my-site.com/rss', Infinity, 2).then(items => {
+        return util.fetch_rss_entries('http://simple-site.com/rss', Infinity, 2).then(items => {
             expect(items.length).to.equal(3);
         });
     });
     it('can specify max items', () => {
-        return util.fetch_rss_entries('http://my-site.com/rss', 2).then(items => {
+        return util.fetch_rss_entries('http://simple-site.com/rss', 2).then(items => {
             expect(items.length).to.equal(2);
         });
     });
     it('can specify max items and max days old', () => {
-        return util.fetch_rss_entries('http://my-site.com/rss', 4, 2).then(items => {
+        return util.fetch_rss_entries('http://simple-site.com/rss', 4, 2).then(items => {
             expect(items.length).to.equal(3);
         });
     });
-});
-
-describe('test_rss_array', () => {
-    let restore;
-    let feeds;
-    beforeEach(function() {
-        feeds = ['http://my-site.com/rss', 'http://site-b.net/feed'];
-        const stub_fetch =  sinon.stub();
-        stub_fetch.withArgs('http://my-site.com/rss').resolves({items: FEED_A, meta: []});
-        stub_fetch.withArgs('http://site-b.net/feed').resolves({items: FEED_B, meta: []});
-        restore = util.__set__('_fetch_rss_json', stub_fetch);
-    });
-    afterEach(() => {
-        restore();
-    });
     it('works with array, default settings', () => {
-        return util.fetch_rss_entries(feeds).then(items => {
+        return util.fetch_rss_entries(feed_array).then(items => {
             expect(items.length).to.equal(5);
         });
     });
     it('can specify max days old, array', () => {
-        return util.fetch_rss_entries(feeds, Infinity, 2).then(items => {
+        return util.fetch_rss_entries(feed_array, Infinity, 2).then(items => {
             expect(items.length).to.equal(7);
         });
     });
     it('can specify max items and max days old, array', () => {
-        return util.fetch_rss_entries(feeds, 4, 2).then(items => {
+        return util.fetch_rss_entries(feed_array, 4, 2).then(items => {
             expect(items.length).to.equal(4);
         });
     });
-});
-
-describe.only('test_rss_pagination', () => {
-    let restore;
-    let feed;
-    beforeEach(function() {
-        const rss_uri = 'http://my-site.com/rss';
-        feed = util.create_wordpress_paginator(rss_uri);
-
-        const stub_fetch =  sinon.stub();
-        stub_fetch.withArgs('http://my-site.com/rss').resolves({items: FEED_A, meta: []});
-        stub_fetch.withArgs('http://my-site.com/rss?paged=1').resolves({items: FEED_A, meta: []});
-        stub_fetch.withArgs('http://my-site.com/rss?paged=2').resolves({items: FEED_A_PAGE_2, meta: []});
-        stub_fetch.withArgs('http://my-site.com/rss?paged=3').resolves({items: FEED_A_PAGE_3, meta: []});
-        // FIXME what does wordpress do?
-        stub_fetch.withArgs('http://my-site.com/rss?paged=4').resolves({items: [], meta: []});
-        restore = util.__set__('_fetch_rss_json', stub_fetch);
-    });
-    afterEach(() => {
-        restore();
-    });
-    it('can do pagination', () => {
-        console.log(feed);
-        return util.fetch_rss_entries(feed, Infinity, 100).then(items => {
+    it('can add pagination', () => {
+        return util.fetch_rss_entries(feed_paginated, Infinity, 100).then(items => {
             expect(items.length).to.equal(10);
         });
     });
-    it('can do pagination, max items', () => {
-        console.log(feed);
-        return util.fetch_rss_entries(feed, 5, 365).then(items => {
+    it('can specify max items, pagination', () => {
+        return util.fetch_rss_entries(feed_paginated, 5, 365).then(items => {
             expect(items.length).to.equal(5);
         });
     });
-    it('can do pagination, max days old', () => {
-        console.log(feed);
-        return util.fetch_rss_entries(feed, 100, 6).then(items => {
+    it('can specify max days old, pagination', () => {
+        return util.fetch_rss_entries(feed_paginated, 100, 6).then(items => {
             expect(items.length).to.equal(7);
         });
     });
-    // FIXME can autodiscover wordpress pagination
+    it('can add pagination to arrays', () => {
+        return util.fetch_rss_entries(feed_array_paged).then(items => {
+            expect(items.length).to.equal(4);
+        });
+    });
+    it('can autodiscover wordpress pagination', () => {
+        return util.fetch_rss_entries(feed_wordpress, Infinity, 365).then(items => {
+            expect(items.length).to.equal(6);
+        });
+    });
+    it('can mix URIs and paginated in arrays', () => {
+        return util.fetch_rss_entries(feed_array_mixed, Infinity, 365).then(items => {
+            expect(items.length).to.equal(10);
+        });
+    });
+    it('can mix and autodiscover wordpress', () => {
+        return util.fetch_rss_entries(feed_array_mixed_wordpress, Infinity, 365).then(items => {
+            expect(items.length).to.equal(10);
+        });
+    });
+    it('can mix and autodiscover and specify max days old', () => {
+        return util.fetch_rss_entries(feed_array_mixed_wordpress, Infinity, 2).then(items => {
+            expect(items.length).to.equal(7);
+        });
+    });
+    it('can mix and autodiscover and specify max items', () => {
+        return util.fetch_rss_entries(feed_array_mixed_wordpress, 5, 2).then(items => {
+            expect(items.length).to.equal(5);
+        });
+    });
 });
-
-// describe('test_rss_pagination_array', () => {
-// });
