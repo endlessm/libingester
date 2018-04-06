@@ -119,7 +119,7 @@ const FEED_DUPS = {
     meta: {}
 };
 
-FEED_PAGES = [
+const FEED_PAGES = [
     ['http://simple-site.com/rss', FEED_SIMPLE],
     ['https://simple2.com/rss', FEED_SIMPLE_2],
     ['http://feed-with-dups', FEED_DUPS],
@@ -327,6 +327,7 @@ describe('get_embedded_video_asset', () => {
     });
 });
 
+// FIXME remove only
 describe.only('test_fetch_rss_entries', () => {
     let restore;
     let feed_array;
@@ -350,18 +351,10 @@ describe.only('test_fetch_rss_entries', () => {
                                       'http://another.com/feed'];
 
         const stub_fetch =  sinon.stub();
-        stub_fetch.withArgs('http://simple-site.com/rss').resolves(FEED_SIMPLE);
-        stub_fetch.withArgs('https://simple2.com/rss').resolves(FEED_SIMPLE_2);
-        stub_fetch.withArgs('http://feed-with-dups').resolves(FEED_DUPS);
-        stub_fetch.withArgs('http://my-site.com/rss').resolves(FEED_A_PAGE_1);
-        stub_fetch.withArgs('http://my-site.com/rss?paged=1').resolves(FEED_A_PAGE_1);
-        stub_fetch.withArgs('http://my-site.com/rss?paged=2').resolves(FEED_A_PAGE_2);
-        stub_fetch.withArgs('http://my-site.com/rss?paged=3').resolves(FEED_A_PAGE_3);
-        stub_fetch.withArgs('http://my-site.com/rss?paged=4').resolves(FEED_A_PAGE_4);
-        stub_fetch.withArgs('http://another.com/feed').resolves(FEED_B_PAGE_1);
-        stub_fetch.withArgs('http://another.com/feed?paged=1').resolves(FEED_B_PAGE_1);
-        stub_fetch.withArgs('http://another.com/feed?paged=2').resolves(FEED_B_PAGE_2);
-        stub_fetch.withArgs('http://another.com/feed?paged=3').resolves(FEED_B_PAGE_3);
+
+        FEED_PAGES.forEach(([input, output]) => {
+            stub_fetch.withArgs(input).resolves(output);
+        });
 
         restore = util.__set__('_fetch_rss_json', stub_fetch);
     });
