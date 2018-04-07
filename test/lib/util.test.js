@@ -9,72 +9,91 @@ const rewire = require('rewire');
 const util = rewire('../../lib/util');
 const libingester = require('../../lib/index');
 
-const now = Date.now();
+const FAKE_NOW = 1523065866010;  // 2018-04-07T01:51:06.010Z
 
 const FEED_SIMPLE = {
     items: [
-        {pubdate: new Date(now - 30 * 60000), // 30 mins ago
-         link: 'http://simple-site.com/article-d'},
-        {pubdate: new Date(now - 120 * 60000), // 2 hs ago
-         link: 'http://simple-site.com/article-c'},
-        {pubdate: new Date(now - 86400000), // 1 day ago
-         link: 'http://simple-site.com/article-b'},
-        {pubdate: new Date(now - 5 * 86400000), // 5 days ago
-         link: 'http://simple-site.com/article-a'},
+        {pubdate: new Date('2018-04-07T01:21:06.010Z'),
+         link: 'http://simple-site.com/article-d',
+         title: '30 mins ago'},
+        {pubdate: new Date('2018-04-06T23:51:06.010Z'),
+         link: 'http://simple-site.com/article-c',
+         title: '2 hs ago'},
+        {pubdate: new Date('2018-04-06T01:51:05.910Z'),
+         link: 'http://simple-site.com/article-b',
+         title: 'almost 1 day ago'},
+        {pubdate: new Date('2018-04-02T01:51:06.010Z'),
+         link: 'http://simple-site.com/article-a',
+         title: '5 days ago'},
     ],
     meta: {}
 };
 
 const FEED_SIMPLE_2 = {
     items: [
-        {pubdate: new Date(now - 12 * 60000), // 12 mins ago
-         link: 'https://simple2.com/5'},
-        {pubdate: new Date(now - 25 * 60000), // 25 mins ago
-         link: 'https://simple2.com/4'},
-        {pubdate: new Date(now - 40 * 60000), // 40 mins ago
-         link: 'https://simple2.com/3'},
-        {pubdate: new Date(now - 86400000 - 2 * 60 * 60000), // 1 day and 2 hs ago
-         link: 'https://simple2.com/2'},
-        {pubdate: new Date(now - 30 * 86400000), // 30 days ago
-         link: 'https://simple2.com/1'},
+        {pubdate: new Date('2018-04-07T01:39:06.010Z'),
+         link: 'https://simple2.com/5',
+         title: '12 mins ago'},
+        {pubdate: new Date('2018-04-07T01:26:06.010Z'),
+         link: 'https://simple2.com/4',
+         title: '25 mins ago'},
+        {pubdate: new Date('2018-04-07T01:11:06.010Z'),
+         link: 'https://simple2.com/3',
+         title: '40 mins ago'},
+        {pubdate: new Date('2018-04-05T23:51:06.010Z'),
+         link: 'https://simple2.com/2',
+         title: '1 day and 2 hs ago'},
+        {pubdate: new Date('2018-03-08T01:51:06.010Z'),
+         link: 'https://simple2.com/1',
+         title: '30 days ago'},
     ],
     meta: {}
 };
 
 const FEED_A_PAGE_1 = {
     items: [
-        {pubdate: new Date(now - 30 * 60000), // 30 mins ago
-         link: 'http://my-site.com/1'},
-        {pubdate: new Date(now - 120 * 60000), // 2 hs ago
-         link: 'http://my-site.com/2'},
-        {pubdate: new Date(now - 86400000), // 1 day ago
-         link: 'http://my-site.com/3'},
-        {pubdate: new Date(now - 5 * 86400000), // 5 days ago
-         link: 'http://my-site.com/4'},
+        {pubdate: new Date('2018-04-07T01:21:06.010Z'),
+         link: 'http://my-site.com/1',
+         title: '30 mins ago'},
+        {pubdate: new Date('2018-04-06T23:51:06.010Z'),
+         link: 'http://my-site.com/2',
+         title: '2 hs ago'},
+        {pubdate: new Date('2018-04-06T01:51:05.910Z'),
+         link: 'http://my-site.com/3',
+         title: 'almost 1 day ago'},
+        {pubdate: new Date('2018-04-02T01:51:06.010Z'),
+         link: 'http://my-site.com/4',
+         title: '5 days ago'},
     ],
     meta: {}
 };
 
 const FEED_A_PAGE_2 = {
     items: [
-        {pubdate: new Date(now - 5 * 86400000 - 2 * 60 * 60000), // 5 days and 2 hs ago
-         link: 'http://my-site.com/foo'},
-        {pubdate: new Date(now - 5 * 86400000 - 8 * 60 * 60000), // 5 days and 8 hs ago
-         link: 'http://my-site.com/bar'},
-        {pubdate: new Date(now - 5 * 86400000 - 12 * 60 * 60000), // 5 days and 12 hs ago
-         link: 'http://my-site.com/baz'},
+        {pubdate: new Date('2018-04-01T23:51:06.010Z'),
+         link: 'http://my-site.com/foo',
+         title: '5 days and 2 hs ago'},
+        {pubdate: new Date('2018-04-01T17:51:06.010Z'),
+         link: 'http://my-site.com/bar',
+         title: '5 days and 8 hs ago'},
+        {pubdate: new Date('2018-04-01T13:51:06.010Z'),
+         link: 'http://my-site.com/baz',
+         title: '5 days and 12 hs ago'},
     ],
     meta: {}
 };
 
 const FEED_A_PAGE_3 = {
     items: [
-        {pubdate: new Date(now - 7 * 86400000 - 3 * 60 * 60000), // 7 days and 3 hs ago
-         link: 'http://my-site.com/x'},
-        {pubdate: new Date(now - 7 * 86400000 - 4 * 60 * 60000), // 7 days and 4 hs ago
-         link: 'http://my-site.com/y'},
-        {pubdate: new Date(now - 7 * 86400000 - 5 * 60 * 60000), // 7 days and 5 hs ago
-         link: 'http://my-site.com/z'},
+        {pubdate: new Date('2018-03-30T22:51:06.010Z'),
+         link: 'http://my-site.com/x',
+         title: '7 days and 3 hs ago'},
+        {pubdate: new Date('2018-03-30T21:51:06.010Z'),
+         link: 'http://my-site.com/y',
+         title: '7 days and 4 hs ago'},
+        {pubdate: new Date('2018-03-30T20:51:06.010Z'),
+         link: 'http://my-site.com/z',
+         title: '7 days and 5 hs ago'},
     ],
     meta: {}
 };
@@ -83,23 +102,29 @@ const FEED_A_PAGE_4 = {items: [], meta: {}};
 
 const FEED_B_PAGE_1 = {
     items: [
-        {pubdate: new Date(now - 3 * 60 * 60000 - 20 * 60000), // 3 hs 20 min ago
-         link: 'http://another.com/f'},
-        {pubdate: new Date(now - 5 * 60 * 60000 - 45 * 60000), // 5 hs 45 min ago
-         link: 'http://another.com/e'},
-        {pubdate: new Date(now - 86400000 - 3 * 60 * 60000), // 1 days and 3 hs ago
-         link: 'http://another.com/d'},
+        {pubdate: new Date('2018-04-06T22:31:06.010Z'),
+         link: 'http://another.com/f',
+         title: '3 hs 20 min ago'},
+        {pubdate: new Date('2018-04-06T20:06:06.010Z'),
+         link: 'http://another.com/e',
+         title: '5 hs 45 min ago'},
+        {pubdate: new Date('2018-04-05T22:51:06.010Z'),
+         link: 'http://another.com/d',
+         title: '1 days and 3 hs ago'},
     ],
     meta: {generator: 'https://wordpress.org/'}
 };
 const FEED_B_PAGE_2 = {
     items: [
-        {pubdate: new Date(now - 86400000 - 7 * 60 * 60000), // 1 days and 7 hs ago
-         link: 'http://another.com/c'},
-        {pubdate: new Date(now - 2 * 86400000 - 12 * 60 * 60000), // 2 days and 12 hs ago
-         link: 'http://another.com/b'},
-        {pubdate: new Date(now - 27 * 86400000), // 27 days ago
-         link: 'http://another.com/a'}
+        {pubdate: new Date('2018-04-05T18:51:06.010Z'),
+         link: 'http://another.com/c',
+         title: '1 days and 7 hs ago'},
+        {pubdate: new Date('2018-04-04T13:51:06.010Z'),
+         link: 'http://another.com/b',
+         title: '2 days and 12 hs ago'},
+        {pubdate: new Date('2018-03-11T01:51:06.010Z'),
+         link: 'http://another.com/a',
+         title: '27 days ago'}
     ],
     meta: {}
 };
@@ -107,14 +132,18 @@ const FEED_B_PAGE_3 = {items: [], meta: {}};
 
 const FEED_DUPS = {
     items: [
-        {pubdate: new Date(now - 7 * 60000), // 7 mins ago
-         link: 'http://feed-dup/one'},
-        {pubdate: new Date(now - 9 * 60000), // 9 mins ago
-         link: 'http://feed-dup/two'},
-        {pubdate: new Date(now - 12 * 60000), // 12 mins ago, duplicated
-         link: 'http://feed-dup/one'},
-        {pubdate: new Date(now - 18 * 60000), // 18 mins ago, duplicated
-         link: 'http://feed-dup/two'},
+        {pubdate: new Date('2018-04-07T01:44:06.010Z'),
+         link: 'http://feed-dup/one',
+         title: '7 mins ago'},
+        {pubdate: new Date('2018-04-07T01:42:06.010Z'),
+         link: 'http://feed-dup/two',
+         title: '9 mins ago'},
+        {pubdate: new Date('2018-04-07T01:39:06.010Z'),
+         link: 'http://feed-dup/one',
+         title: '12 mins ago, duplicated'},
+        {pubdate: new Date('2018-04-07T01:33:06.010Z'),
+         link: 'http://feed-dup/two',
+         title: '18 mins ago, duplicated'},
     ],
     meta: {}
 };
@@ -329,22 +358,25 @@ describe('get_embedded_video_asset', () => {
 
 // FIXME remove only
 describe.only('test_fetch_rss_entries', () => {
-    let restore;
     let feed_array;
     let feed_paginated;
     let feed_wordpress;
     let feed_array_paged;
+    let feed_array_paged2;
     let feed_array_mixed;
     let feed_array_mixed_wordpress;
+    let fetch_rss_restore;
+    let clock;
 
     beforeEach(function() {
+        clock = sinon.useFakeTimers(FAKE_NOW);
         feed_array = ['http://simple-site.com/rss', 'https://simple2.com/rss'];
         feed_paginated = util.create_wordpress_paginator('http://my-site.com/rss');
         feed_wordpress = 'http://another.com/feed';
         feed_array_paged = util.create_wordpress_paginator(['http://my-site.com/rss',
                                                             'http://another.com/feed']);
-        // feed_array_paged = [util.create_wordpress_paginator('http://my-site.com/rss'),
-        //                     util.create_wordpress_paginator('http://another.com/feed')];
+        feed_array_paged2 = [util.create_wordpress_paginator('http://my-site.com/rss'),
+                             util.create_wordpress_paginator('http://another.com/feed')];
         feed_array_mixed = ['http://simple-site.com/rss',
                             util.create_wordpress_paginator('http://another.com/feed')];
         feed_array_mixed_wordpress = ['http://simple-site.com/rss',
@@ -356,10 +388,11 @@ describe.only('test_fetch_rss_entries', () => {
             stub_fetch.withArgs(input).resolves(output);
         });
 
-        restore = util.__set__('_fetch_rss_json', stub_fetch);
+        fetch_rss_restore = util.__set__('_fetch_rss_json', stub_fetch);
     });
     afterEach(() => {
-        restore();
+        fetch_rss_restore();
+        clock.restore();
     });
     it('works with default settings', () => {
         return util.fetch_rss_entries('http://simple-site.com/rss').then(items => {
@@ -418,6 +451,11 @@ describe.only('test_fetch_rss_entries', () => {
     });
     it('can add pagination to arrays', () => {
         return util.fetch_rss_entries(feed_array_paged).then(items => {
+            expect(items.length).to.equal(4);
+        });
+    });
+    it('can add pagination to items in arrays', () => {
+        return util.fetch_rss_entries(feed_array_paged2).then(items => {
             expect(items.length).to.equal(4);
         });
     });
