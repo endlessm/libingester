@@ -33,9 +33,12 @@
     "chai": "^3.5.0",
     "documentation": "^5.3.5",
     "jshint": "^2.9.5",
+    "json-date-parser": "^1.0.1",
     "mocha": "^4.1.0",
     "mocha-jenkins-reporter": "^0.3.7",
-    "proxyquire": "^1.8.0"
+    "proxyquire": "^1.8.0",
+    "rewire": "^3.0.2",
+    "sinon": "^4.4.10"
   },
   "scripts": {
     "docs:build": "rm -rf docs && documentation build lib/index.js lib/util.js -o docs -f html",
