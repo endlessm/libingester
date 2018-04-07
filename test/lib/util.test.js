@@ -8,159 +8,28 @@ const cheerio = require('cheerio');
 const rewire = require('rewire');
 const util = rewire('../../lib/util');
 const libingester = require('../../lib/index');
+const { jsonDateParser } = require('json-date-parser');
 
 const FAKE_NOW = 1523065866010;  // 2018-04-07T01:51:06.010Z
 
-const FEED_SIMPLE = {
-    items: [
-        {pubdate: new Date('2018-04-07T01:21:06.010Z'),
-         link: 'http://simple-site.com/article-d',
-         title: '30 mins ago'},
-        {pubdate: new Date('2018-04-06T23:51:06.010Z'),
-         link: 'http://simple-site.com/article-c',
-         title: '2 hs ago'},
-        {pubdate: new Date('2018-04-06T01:51:05.910Z'),
-         link: 'http://simple-site.com/article-b',
-         title: 'almost 1 day ago'},
-        {pubdate: new Date('2018-04-02T01:51:06.010Z'),
-         link: 'http://simple-site.com/article-a',
-         title: '5 days ago'},
-    ],
-    meta: {}
-};
+const _RSS_JSON = fs.readFileSync(__dirname + '/test_files/rss-feeds.json',
+                                  jsonDateParser);
 
-const FEED_SIMPLE_2 = {
-    items: [
-        {pubdate: new Date('2018-04-07T01:39:06.010Z'),
-         link: 'https://simple2.com/5',
-         title: '12 mins ago'},
-        {pubdate: new Date('2018-04-07T01:26:06.010Z'),
-         link: 'https://simple2.com/4',
-         title: '25 mins ago'},
-        {pubdate: new Date('2018-04-07T01:11:06.010Z'),
-         link: 'https://simple2.com/3',
-         title: '40 mins ago'},
-        {pubdate: new Date('2018-04-05T23:51:06.010Z'),
-         link: 'https://simple2.com/2',
-         title: '1 day and 2 hs ago'},
-        {pubdate: new Date('2018-03-08T01:51:06.010Z'),
-         link: 'https://simple2.com/1',
-         title: '30 days ago'},
-    ],
-    meta: {}
-};
-
-const FEED_A_PAGE_1 = {
-    items: [
-        {pubdate: new Date('2018-04-07T01:21:06.010Z'),
-         link: 'http://my-site.com/1',
-         title: '30 mins ago'},
-        {pubdate: new Date('2018-04-06T23:51:06.010Z'),
-         link: 'http://my-site.com/2',
-         title: '2 hs ago'},
-        {pubdate: new Date('2018-04-06T01:51:05.910Z'),
-         link: 'http://my-site.com/3',
-         title: 'almost 1 day ago'},
-        {pubdate: new Date('2018-04-02T01:51:06.010Z'),
-         link: 'http://my-site.com/4',
-         title: '5 days ago'},
-    ],
-    meta: {}
-};
-
-const FEED_A_PAGE_2 = {
-    items: [
-        {pubdate: new Date('2018-04-01T23:51:06.010Z'),
-         link: 'http://my-site.com/foo',
-         title: '5 days and 2 hs ago'},
-        {pubdate: new Date('2018-04-01T17:51:06.010Z'),
-         link: 'http://my-site.com/bar',
-         title: '5 days and 8 hs ago'},
-        {pubdate: new Date('2018-04-01T13:51:06.010Z'),
-         link: 'http://my-site.com/baz',
-         title: '5 days and 12 hs ago'},
-    ],
-    meta: {}
-};
-
-const FEED_A_PAGE_3 = {
-    items: [
-        {pubdate: new Date('2018-03-30T22:51:06.010Z'),
-         link: 'http://my-site.com/x',
-         title: '7 days and 3 hs ago'},
-        {pubdate: new Date('2018-03-30T21:51:06.010Z'),
-         link: 'http://my-site.com/y',
-         title: '7 days and 4 hs ago'},
-        {pubdate: new Date('2018-03-30T20:51:06.010Z'),
-         link: 'http://my-site.com/z',
-         title: '7 days and 5 hs ago'},
-    ],
-    meta: {}
-};
-
-const FEED_A_PAGE_4 = {items: [], meta: {}};
-
-const FEED_B_PAGE_1 = {
-    items: [
-        {pubdate: new Date('2018-04-06T22:31:06.010Z'),
-         link: 'http://another.com/f',
-         title: '3 hs 20 min ago'},
-        {pubdate: new Date('2018-04-06T20:06:06.010Z'),
-         link: 'http://another.com/e',
-         title: '5 hs 45 min ago'},
-        {pubdate: new Date('2018-04-05T22:51:06.010Z'),
-         link: 'http://another.com/d',
-         title: '1 days and 3 hs ago'},
-    ],
-    meta: {generator: 'https://wordpress.org/'}
-};
-const FEED_B_PAGE_2 = {
-    items: [
-        {pubdate: new Date('2018-04-05T18:51:06.010Z'),
-         link: 'http://another.com/c',
-         title: '1 days and 7 hs ago'},
-        {pubdate: new Date('2018-04-04T13:51:06.010Z'),
-         link: 'http://another.com/b',
-         title: '2 days and 12 hs ago'},
-        {pubdate: new Date('2018-03-11T01:51:06.010Z'),
-         link: 'http://another.com/a',
-         title: '27 days ago'}
-    ],
-    meta: {}
-};
-const FEED_B_PAGE_3 = {items: [], meta: {}};
-
-const FEED_DUPS = {
-    items: [
-        {pubdate: new Date('2018-04-07T01:44:06.010Z'),
-         link: 'http://feed-dup/one',
-         title: '7 mins ago'},
-        {pubdate: new Date('2018-04-07T01:42:06.010Z'),
-         link: 'http://feed-dup/two',
-         title: '9 mins ago'},
-        {pubdate: new Date('2018-04-07T01:39:06.010Z'),
-         link: 'http://feed-dup/one',
-         title: '12 mins ago, duplicated'},
-        {pubdate: new Date('2018-04-07T01:33:06.010Z'),
-         link: 'http://feed-dup/two',
-         title: '18 mins ago, duplicated'},
-    ],
-    meta: {}
-};
+const FEEDS = JSON.parse(_RSS_JSON, jsonDateParser);
 
 const FEED_PAGES = [
-    ['http://simple-site.com/rss', FEED_SIMPLE],
-    ['https://simple2.com/rss', FEED_SIMPLE_2],
-    ['http://feed-with-dups', FEED_DUPS],
-    ['http://my-site.com/rss', FEED_A_PAGE_1],
-    ['http://my-site.com/rss?paged=1', FEED_A_PAGE_1],
-    ['http://my-site.com/rss?paged=2', FEED_A_PAGE_2],
-    ['http://my-site.com/rss?paged=3', FEED_A_PAGE_3],
-    ['http://my-site.com/rss?paged=4', FEED_A_PAGE_4],
-    ['http://another.com/feed', FEED_B_PAGE_1],
-    ['http://another.com/feed?paged=1', FEED_B_PAGE_1],
-    ['http://another.com/feed?paged=2', FEED_B_PAGE_2],
-    ['http://another.com/feed?paged=3', FEED_B_PAGE_3],
+    ['http://simple-site.com/rss', FEEDS['simple']],
+    ['https://simple2.com/rss', FEEDS['simple_2']],
+    ['http://feed-with-dups', FEEDS['dups']],
+    ['http://my-site.com/rss', FEEDS['A_page_1']],
+    ['http://my-site.com/rss?paged=1', FEEDS['A_page_1']],
+    ['http://my-site.com/rss?paged=2', FEEDS['A_page_2']],
+    ['http://my-site.com/rss?paged=3', FEEDS['A_page_3']],
+    ['http://my-site.com/rss?paged=4', FEEDS['A_page_4']],
+    ['http://another.com/feed', FEEDS['B_page_1']],
+    ['http://another.com/feed?paged=1', FEEDS['B_page_1']],
+    ['http://another.com/feed?paged=2', FEEDS['B_page_2']],
+    ['http://another.com/feed?paged=3', FEEDS['B_page_3']],
 ];
 
 describe('encode_uri', function() {
