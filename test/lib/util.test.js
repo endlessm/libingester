@@ -264,6 +264,8 @@ describe('test_fetch_rss_entries', () => {
     it('works with default settings', () => {
         return util.fetch_rss_entries('http://simple-site.com/rss').then(items => {
             expect(items.length).to.equal(2);
+            expect(items[0]).to.include.keys('link');
+            expect(items[1]).to.include.keys('link');
         });
     });
     it('removes duplicated URLs', () => {
