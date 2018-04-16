@@ -17,11 +17,10 @@ pushd $CURRENT_DIR > /dev/null
     export JUNIT_REPORT_STACK=1
     export JUNIT_REPORT_PACKAGES=1
 
-    ./node_modules/.bin/mocha --harmony_default_parameters \
-                              --recursive \
+    ./node_modules/.bin/mocha --recursive \
                               --check-leaks \
                               --reporter mocha-jenkins-reporter || true
   else
-    ./node_modules/.bin/mocha --harmony_default_parameters --recursive --check-leaks
+    ./node_modules/.bin/mocha --recursive --check-leaks
   fi
 popd >/dev/null
