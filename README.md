@@ -13,10 +13,25 @@ LGPL v2.1
 
 ### Running tests
 - Prerequisites:
- - `npm install`
+ ```
+ $ npm install
+ ```
 
 - Running tests:
- - `npm test`
- - or `./run_tests.sh`
+ ```
+ $ npm test # or ./run_tests.sh
+ ```
 
-©2017 Endless Mobile
+- Linting (jshint):
+ ```
+ $ sudo npm install -g jshint
+ $ jshint ./path/to/file/or/directory
+ ```
+
+- Linting (eslint - currently only works in lib/):
+ ```
+ $ sudo npm install -g eslint
+ $ eslint ./path/to/file/or/directory
+ ```
+
+©2017-2018 Endless Mobile
