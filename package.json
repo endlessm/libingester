@@ -40,7 +40,7 @@
     "sinon": "^4.4.10"
   },
   "scripts": {
-    "docs:build": "rm -rf docs && documentation build lib/index.js lib/util.js -o docs -f html",
+    "docs:build": "rm -rf docs && documentation build lib/index.js lib/util.js lib/config.js -o docs -f html",
     "docs:publish": "npm run docs:build && git add -A docs && git commit -m 'Auto commit documentation'",
     "release": "./run_release.sh",
     "test": "./run_tests.sh"
