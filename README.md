@@ -22,16 +22,10 @@ LGPL v2.1
  $ npm test # or ./run_tests.sh
  ```
 
-- Linting (jshint):
- ```
- $ sudo npm install -g jshint
- $ jshint ./path/to/file/or/directory
- ```
-
-- Linting (eslint - currently only works in lib/):
+### Linting (eslint):
  ```
  $ sudo npm install -g eslint
- $ eslint ./path/to/file/or/directory
+ $ eslint .
  ```
 
 ©2017-2018 Endless Mobile
