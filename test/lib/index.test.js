@@ -4,6 +4,8 @@ const fs = require('fs');
 const expect = require('chai').expect;
 const proxyquire = require('proxyquire');
 
+const config = require('../../lib/config');
+
 const libingester = proxyquire('../../lib/index', {
     './verify': {
         verify_metadata: () => {},
@@ -91,6 +93,12 @@ describe('Hatch', function() {
     });
 
     describe('argv no-tgz option', function() {
+        beforeEach(() => {
+            config.clean();
+        });
+        afterEach(() => {
+            config.clean();
+        });
         it('does not blow up when no-tgz arg is missing', function() {
             // Implicit non-exception
             hatch = new libingester.Hatch("aacd", "en", { argv: ["/some/path"] });
@@ -131,6 +139,12 @@ describe('Hatch', function() {
     });
 
     describe('argv path option', function() {
+        beforeEach(() => {
+            config.clean();
+        });
+        afterEach(() => {
+            config.clean();
+        });
         it('does not blow up when path arg is not there', function() {
             // Implicit non-exception
             hatch = new libingester.Hatch("abcd", "en", { argv: ["--foo", "/some/path"] });
@@ -172,6 +186,12 @@ describe('Hatch', function() {
     });
 
     describe('argv urls option', function() {
+        beforeEach(() => {
+            config.clean();
+        });
+        afterEach(() => {
+            config.clean();
+        });
         it('null when urls arg is missing', function() {
             hatch = new libingester.Hatch("aacd", "en", { argv: ["/some/path"] });
             expect(hatch.get_urls()).to.be.a('null');
@@ -188,9 +208,13 @@ describe('Hatch', function() {
     describe('handles failed assets', () => {
         let expectedError;
         beforeEach(() => {
+            config.clean();
             hatch = new libingester.Hatch("abcd", "en", { argv: ["--no-tgz"] });
             expectedError = new Error('expected error');
             expectedError.stack = '';
+        });
+        afterEach(() => {
+            config.clean();
         });
 
         it('fails if all assets failed', () => {
@@ -279,7 +303,11 @@ describe('Hatch', function() {
 
     describe('builds hierarchy', () => {
         beforeEach(() => {
+            config.clean();
             hatch = new libingester.Hatch("abcd", "en", { argv: ["--no-tgz"] });
+        });
+        afterEach(() => {
+            config.clean();
         });
 
         it('only assigns parent assets the "isToplevel" attribute', () => {
