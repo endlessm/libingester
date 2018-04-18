@@ -1,7 +1,6 @@
 'use strict';
 
 const libingester = require('libingester');
-const rss2json = require('rss-to-json');
 
 const rss_uri = "http://www.livingloving.net/feed/";
 
@@ -110,8 +109,8 @@ function ingest_article(hatch, uri) {
 
 function main() {
     let hatch = new libingester.Hatch('livingloving', 'id');
-    rss2json.load(rss_uri, function(err, rss) {
-        let articles_links = rss.items.map((datum) => datum.url);
+    libingester.util.fetch_rss_entries(rss_uri).then(items => {
+        let articles_links = items.map((datum) => datum.link);
         Promise.all(articles_links.map((uri) => ingest_article(hatch, uri))).then(() => hatch.finish());
     });
 }
