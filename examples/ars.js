@@ -3,9 +3,6 @@
 // Ars Technica, Open Source tag example
 
 const Libingester = require('libingester');
-const thenifyAll = require('thenify-all');
-const RssToJson = thenifyAll(require('rss-to-json'), {}, ['load']);
-const fs = thenifyAll(require('fs'), {}, ['writeFile']);
 
 const FEED_URI = 'http://feeds.arstechnica.com/arstechnica/open-source';
 const COMMENT_NODE = 8;
@@ -15,15 +12,15 @@ function remove_intermediate($, selector) {
 }
 
 function ingest_article(hatch, entry) {
-    return Libingester.util.fetch_html(entry.url).then($ => {
-        const BASE_URI = Libingester.util.get_doc_base_uri($, entry.url);
+    return Libingester.util.fetch_html(entry.link).then($ => {
+        const BASE_URI = Libingester.util.get_doc_base_uri($, entry.link);
         let asset = new Libingester.NewsArticle();
 
         console.log('processing', entry.title);
         asset.set_title(entry.title);
         asset.set_synopsis(entry.description);
-        asset.set_date_published(entry.created);
-        asset.set_last_modified_date(new Date(entry.created));
+        asset.set_date_published(entry.pubdate);
+        asset.set_last_modified_date(entry.date);
         asset.set_source('Ars Technica');
         asset.set_license('Proprietary');
         asset.set_section('open-source');
@@ -112,8 +109,8 @@ function ingest_article(hatch, entry) {
 
 function main() {
     let hatch = new Libingester.Hatch('ars', 'en');
-    RssToJson.load(FEED_URI).then(rss =>
-        Promise.all(rss.items.map(entry => ingest_article(hatch, entry))))
+    Libingester.util.fetch_rss_entries(FEED_URI).then(items =>
+        Promise.all(items.map(entry => ingest_article(hatch, entry))))
     .then(() => hatch.finish())
     .catch(err => {
         console.log('there was an error', err);

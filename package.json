@@ -25,7 +25,6 @@
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "tar": "^4.2.0",
-    "thenify-all": "^1.6.0",
     "validator": "^8.0.0",
     "winston": "^2.4.0"
   },
