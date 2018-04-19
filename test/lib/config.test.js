@@ -33,4 +33,14 @@ describe('config', function() {
         expect(config.get_setting('path')).to.equal("/tmp/my-new-path");
         expect(config.get_setting('no-tgz')).to.be.true;
     });
+
+    it('can override default options', function() {
+        config.parse_options();
+        expect(config.get_setting('max-retries')).to.equal("3");
+        expect(config.get_setting('retry-backoff-delay')).to.equal("800");
+        config.parse_options({ argv: ["--max-retries", "10",
+                                      "--retry-backoff-delay", "1000"] });
+        expect(config.get_setting('max-retries')).to.equal("10");
+        expect(config.get_setting('retry-backoff-delay')).to.equal("1000");
+    });
 });
