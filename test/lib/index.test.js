@@ -1,7 +1,7 @@
 'use strict';
 
-const fs = require('fs');
 const expect = require('chai').expect;
+const fs = require('fs');
 const proxyquire = require('proxyquire');
 
 const config = require('../../lib/config');
@@ -14,8 +14,14 @@ const libingester = proxyquire('../../lib/index', {
 });
 
 class MockAsset extends libingester.BaseAsset {
-    fails_with_error(err) { this._err = err; }
-    set_dependent_assets(dependents) { this._dependents = dependents; }
+    fails_with_error(err) {
+        this._err = err;
+    }
+
+    set_dependent_assets(dependents) {
+        this._dependents = dependents;
+    }
+
     get_dependent_assets() {
         if (this._dependents) {
             return this._dependents.map(asset => asset.asset_id);
@@ -23,6 +29,7 @@ class MockAsset extends libingester.BaseAsset {
 
         return [];
     }
+
     _process() {
         if (this._err) {
             return Promise.reject(this._err);
@@ -32,25 +39,35 @@ class MockAsset extends libingester.BaseAsset {
     }
 }
 
-function rmrf (dir) {
+function rmrf(dir) {
     fs.readdirSync(dir).forEach(file => fs.unlinkSync(`${dir}/${file}`));
     fs.rmdirSync(dir);
 }
 
-function createAssets (n) {
+function createAssets(n) {
     let result = [];
-    for (let i=0; i<n; i++) {
+    for (let i = 0; i < n; i++) {
         result.push(new MockAsset());
     }
     return result;
 }
 
-function readHatchManifest (hatch) {
+function readHatchManifest(hatch) {
     const manifestPath = `./${hatch.get_path()}/hatch_manifest.json`;
     return JSON.parse(fs.readFileSync(manifestPath));
 }
 
-describe('Hatch', function() {
+function findAsset(manifest, sought) {
+    return manifest.assets.find(asset => sought.asset_id === asset.asset_id);
+}
+
+function expectPromiseRejects(p) {
+    return p.then(() => {
+        throw new Error('Expected promise to reject, but it resolved!');
+    }, () => {});
+}
+
+describe('Hatch', () => {
     let hatch;
 
     afterEach(() => {
@@ -59,63 +76,69 @@ describe('Hatch', function() {
         }
     });
 
-    describe('required params', function() {
-        it('can return path of hatch', function() {
-            hatch = new libingester.Hatch("abcd", "en");
+    describe('required params', () => {
+        it('can return path of hatch', () => {
+            hatch = new libingester.Hatch('abcd', 'en');
             expect(hatch.get_path()).to.match(/hatch_abcd_[0-9_]+/);
         });
 
-        it('can return the name of hatch', function() {
-            hatch = new libingester.Hatch("testing", "en");
-            expect(hatch.get_name()).to.equal("testing");
+        it('can return the name of hatch', () => {
+            hatch = new libingester.Hatch('testing', 'en');
+            expect(hatch.get_name()).to.equal('testing');
         });
 
-        it('can return the language of hatch', function() {
-            hatch = new libingester.Hatch("abcd", "something");
-            expect(hatch.get_language()).to.equal("something");
+        it('can return the language of hatch', () => {
+            hatch = new libingester.Hatch('abcd', 'something');
+            expect(hatch.get_language()).to.equal('something');
         });
 
-        it('can be forced to use specific path', function() {
-            hatch = new libingester.Hatch("abcd", "en", { path: "./foo_bar_baz" });
+        it('can be forced to use specific path', () => {
+            hatch = new libingester.Hatch('abcd', 'en', { path: './foo_bar_baz' });
             expect(hatch.get_path()).to.match(/foo_bar_baz/);
         });
 
-        it('requires name and lang parameters to instantiate', function() {
-            expect(() => { new libingester.Hatch() }).to.throw();
-            expect(() => { new libingester.Hatch("abcd") }).to.throw();
+        it('requires name and lang parameters to instantiate', () => {
+            expect(() => {
+                new libingester.Hatch();
+            }).to.throw();
+            expect(() => {
+                new libingester.Hatch('abcd');
+            }).to.throw();
         });
 
         // XXX: This is to ensure that v2-converted ingesters know that they
         //      need to use the newer api.
-        it('requires second param to be a string', function() {
-            expect(() => { new libingester.Hatch("abcd", { foo: "bar" }) }).to.throw();
+        it('requires second param to be a string', () => {
+            expect(() => {
+                new libingester.Hatch('abcd', { foo: 'bar' });
+            }).to.throw();
         });
     });
 
-    describe('argv no-tgz option', function() {
+    describe('argv no-tgz option', () => {
         beforeEach(() => {
             config.clean();
         });
         afterEach(() => {
             config.clean();
         });
-        it('does not blow up when no-tgz arg is missing', function() {
+        it('does not blow up when no-tgz arg is missing', () => {
             // Implicit non-exception
-            hatch = new libingester.Hatch("aacd", "en", { argv: ["/some/path"] });
+            hatch = new libingester.Hatch('aacd', 'en', { argv: ['/some/path'] });
         });
 
-        it('does not blow up when no-tgz arg is at the end', function() {
+        it('does not blow up when no-tgz arg is at the end', () => {
             // Implicit non-exception
-            hatch = new libingester.Hatch("abad", "en", { argv: ["/blah", "--no-tgz"] });
+            hatch = new libingester.Hatch('abad', 'en', { argv: [ '/blah', '--no-tgz' ] });
         });
 
-        it('does not blow up when no-tgz arg is at the end', function() {
+        it('does not blow up when no-tgz arg is at the end', () => {
             // Implicit non-exception
-            hatch = new libingester.Hatch("abbd", "en", { argv: ["/blah", "--no-tgz"] });
+            hatch = new libingester.Hatch('abbd', 'en', { argv: [ '/blah', '--no-tgz' ] });
         });
 
-        it('does not skip tgz by default', function() {
-            hatch = new libingester.Hatch("aaaa", "en", { argv: ["/blah"] });
+        it('does not skip tgz by default', () => {
+            hatch = new libingester.Hatch('aaaa', 'en', { argv: ['/blah'] });
             expect(hatch.is_exporting_tgz()).to.be.equal(true);
 
             return hatch.finish().then(() => {
@@ -126,8 +149,8 @@ describe('Hatch', function() {
             });
         });
 
-        it('skip tgz if flag set', function() {
-            hatch = new libingester.Hatch("abce", "en", { argv: ["/blah", "--no-tgz"] });
+        it('skip tgz if flag set', () => {
+            hatch = new libingester.Hatch('abce', 'en', { argv: [ '/blah', '--no-tgz' ] });
             expect(hatch.is_exporting_tgz()).to.be.equal(false);
 
             return hatch.finish().then(() => {
@@ -138,42 +161,42 @@ describe('Hatch', function() {
         });
     });
 
-    describe('argv path option', function() {
+    describe('argv path option', () => {
         beforeEach(() => {
             config.clean();
         });
         afterEach(() => {
             config.clean();
         });
-        it('does not blow up when path arg is not there', function() {
+        it('does not blow up when path arg is not there', () => {
             // Implicit non-exception
-            hatch = new libingester.Hatch("abcd", "en", { argv: ["--foo", "/some/path"] });
+            hatch = new libingester.Hatch('abcd', 'en', { argv: [ '--foo', '/some/path' ] });
         });
 
-        it('can process path correctly from passed in argv', function() {
-            hatch = new libingester.Hatch("abcd", "en", { argv: ["--path", "./hatch_foo"] });
-            expect(hatch.get_path()).to.equal("./hatch_foo");
+        it('can process path correctly from passed in argv', () => {
+            hatch = new libingester.Hatch('abcd', 'en', { argv: [ '--path', './hatch_foo' ] });
+            expect(hatch.get_path()).to.equal('./hatch_foo');
         });
 
-        it('does not break if invalid arg position', function() {
-            hatch = new libingester.Hatch("abcd", "en", { argv: ["foo", "--path"] });
+        it('does not break if invalid arg position', () => {
+            hatch = new libingester.Hatch('abcd', 'en', { argv: [ 'foo', '--path' ] });
             expect(hatch.get_path()).to.match(/hatch_abcd_[0-9_]+/);
         });
 
-        it('creates the directory path if missing', function() {
-            const targetDir = "./abcdefg";
+        it('creates the directory path if missing', () => {
+            const targetDir = './abcdefg';
             if (fs.existsSync(targetDir)) {
                 fs.rmdirSync(targetDir);
             }
 
             expect(fs.existsSync(targetDir)).to.be.equal(false);
 
-            hatch = new libingester.Hatch("abcd", "en", { argv: ["--path", targetDir] });
+            hatch = new libingester.Hatch('abcd', 'en', { argv: [ '--path', targetDir ] });
             expect(fs.lstatSync(targetDir).isDirectory()).to.be.equal(true);
         });
 
-        it('does not break if directory is already there', function() {
-            const targetDir = "./abcdefg2";
+        it('does not break if directory is already there', () => {
+            const targetDir = './abcdefg2';
             if (fs.existsSync(targetDir)) {
                 fs.rmdirSync(targetDir);
             }
@@ -181,27 +204,27 @@ describe('Hatch', function() {
 
             expect(fs.lstatSync(targetDir).isDirectory()).to.be.equal(true);
 
-            hatch = new libingester.Hatch("abcd", "en", { argv: ["--path", targetDir] });
+            hatch = new libingester.Hatch('abcd', 'en', { argv: [ '--path', targetDir ] });
         });
     });
 
-    describe('argv urls option', function() {
+    describe('argv urls option', () => {
         beforeEach(() => {
             config.clean();
         });
         afterEach(() => {
             config.clean();
         });
-        it('null when urls arg is missing', function() {
-            hatch = new libingester.Hatch("aacd", "en", { argv: ["/some/path"] });
+        it('null when urls arg is missing', () => {
+            hatch = new libingester.Hatch('aacd', 'en', { argv: ['/some/path'] });
             expect(hatch.get_urls()).to.be.a('null');
         });
-        it('can process urls correctly from passed in argv', function() {
-            const argv = ["--urls", "https://foo.com", "https://bar.com"];
-            hatch = new libingester.Hatch("abcd", "en",
+        it('can process urls correctly from passed in argv', () => {
+            const argv = [ '--urls', 'https://foo.com', 'https://bar.com' ];
+            hatch = new libingester.Hatch('abcd', 'en',
                                           { argv: argv });
-            expect(hatch.get_urls()).to.have.members(["https://foo.com",
-                                                      "https://bar.com"]);
+            expect(hatch.get_urls()).to.have.members([ 'https://foo.com',
+                                                       'https://bar.com' ]);
         });
     });
 
@@ -209,7 +232,7 @@ describe('Hatch', function() {
         let expectedError;
         beforeEach(() => {
             config.clean();
-            hatch = new libingester.Hatch("abcd", "en", { argv: ["--no-tgz"] });
+            hatch = new libingester.Hatch('abcd', 'en', { argv: ['--no-tgz'] });
             expectedError = new Error('expected error');
             expectedError.stack = '';
         });
@@ -227,8 +250,7 @@ describe('Hatch', function() {
 
         it('fails if more than 90% of assets failed', () => {
             const assets = createAssets(100);
-            assets.slice(0, 91).forEach(asset =>
-                asset.fails_with_error(expectedError));
+            assets.slice(0, 91).forEach(asset => asset.fails_with_error(expectedError));
             assets.forEach(asset => hatch.save_asset(asset));
 
             return expectPromiseRejects(hatch.finish());
@@ -236,8 +258,7 @@ describe('Hatch', function() {
 
         it('passes if 90% or fewer assets failed', () => {
             const assets = createAssets(100);
-            assets.slice(0, 90).forEach(asset =>
-                asset.fails_with_error(expectedError));
+            assets.slice(0, 90).forEach(asset => asset.fails_with_error(expectedError));
             assets.forEach(asset => hatch.save_asset(asset));
 
             return hatch.finish();
@@ -255,7 +276,7 @@ describe('Hatch', function() {
                 const manifest = readHatchManifest(hatch);
                 const assetIDs = manifest.assets.map(asset => asset.asset_id);
                 expect(assetIDs).to.deep.equal([
-                     succeeds.asset_id,
+                    succeeds.asset_id,
                 ]);
             });
         });
@@ -268,13 +289,13 @@ describe('Hatch', function() {
 
             // add a successful asset to prevent the hatch from failing
             const succeeds = new MockAsset();
-            [root, child, succeeds].forEach(asset => hatch.save_asset(asset));
+            [ root, child, succeeds ].forEach(asset => hatch.save_asset(asset));
 
             return hatch.finish().then(() => {
                 const manifest = readHatchManifest(hatch);
                 const assetIDs = manifest.assets.map(asset => asset.asset_id);
                 expect(assetIDs).to.deep.equal([
-                     succeeds.asset_id,
+                    succeeds.asset_id,
                 ]);
             });
         });
@@ -284,18 +305,18 @@ describe('Hatch', function() {
             const child1 = new MockAsset();
             const child2 = new MockAsset();
             child1.fails_with_error(expectedError);
-            root.set_dependent_assets([child1, child2]);
+            root.set_dependent_assets([ child1, child2 ]);
 
             // add a successful asset to prevent the hatch from failing
             const succeeds = new MockAsset();
 
-            [root, child1, child2, succeeds].forEach(asset => hatch.save_asset(asset));
+            [ root, child1, child2, succeeds ].forEach(asset => hatch.save_asset(asset));
 
             return hatch.finish().then(() => {
                 const manifest = readHatchManifest(hatch);
                 const assetIDs = manifest.assets.map(asset => asset.asset_id);
                 expect(assetIDs).to.deep.equal([
-                     succeeds.asset_id,
+                    succeeds.asset_id,
                 ]);
             });
         });
@@ -304,7 +325,7 @@ describe('Hatch', function() {
     describe('builds hierarchy', () => {
         beforeEach(() => {
             config.clean();
-            hatch = new libingester.Hatch("abcd", "en", { argv: ["--no-tgz"] });
+            hatch = new libingester.Hatch('abcd', 'en', { argv: ['--no-tgz'] });
         });
         afterEach(() => {
             config.clean();
@@ -317,9 +338,9 @@ describe('Hatch', function() {
             const c2 = new MockAsset();
             const c3 = new MockAsset();
 
-            p1.set_dependent_assets([c1, c2]);
+            p1.set_dependent_assets([ c1, c2 ]);
             p2.set_dependent_assets([c3]);
-            [p1, p2, c1, c2, c3].forEach(a => hatch.save_asset(a));
+            [ p1, p2, c1, c2, c3 ].forEach(a => hatch.save_asset(a));
 
             return hatch.finish().then(() => {
                 const manifest = readHatchManifest(hatch);
@@ -334,37 +355,29 @@ describe('Hatch', function() {
     });
 });
 
-function findAsset (manifest, sought) {
-    return manifest.assets.find(asset => sought.asset_id === asset.asset_id);
-}
-
-function expectPromiseRejects (p) {
-    return p.then(() => {
-        throw new Error(`Expected promise to reject, but it resolved!`);
-    }, () => {});
-}
-
-describe('MockAsset', function() {
-    it('can set tags', function() {
+describe('MockAsset', () => {
+    it('can set tags', () => {
         const asset = new MockAsset();
-        asset.set_tags(['some', 'tags']);
+        asset.set_tags([ 'some', 'tags' ]);
         const metadata = asset.to_metadata();
-        expect(metadata['tags']).to.deep.equal(['some', 'tags']);
+        expect(metadata['tags']).to.deep.equal([ 'some', 'tags' ]);
     });
 
-    it('can set null synopsis', function() {
+    it('can set null synopsis', () => {
         const asset = new MockAsset();
-        expect(() => { asset.set_synopsis(undefined) }).to.not.throw();
+        expect(() => {
+            asset.set_synopsis(undefined);
+        }).to.not.throw();
     });
 });
 
-describe('ImageAsset', function() {
-    it('can serialize out correctly', function() {
+describe('ImageAsset', () => {
+    it('can serialize out correctly', () => {
         const asset = new libingester.ImageAsset();
-        const thumbnail_asset = new libingester.ImageAsset();
+        const thumbnailAsset = new libingester.ImageAsset();
         asset.set_title('Test Asset');
         asset.set_synopsis('Test Asset synopsis');
-        asset.set_thumbnail(thumbnail_asset);
+        asset.set_thumbnail(thumbnailAsset);
         asset.set_license('Proprietary');
         asset.set_canonical_uri('https://www.example.com/');
         asset.set_last_modified_date(new Date(1492545280000));
@@ -374,24 +387,24 @@ describe('ImageAsset', function() {
 
         // Check that asset ID and thumbnail asset ID are passed through
         expect(metadata['assetID']).to.equal(asset.asset_id);
-        expect(metadata['thumbnail']).to.equal(thumbnail_asset.asset_id);
+        expect(metadata['thumbnail']).to.equal(thumbnailAsset.asset_id);
         // Remove the ID fields before checking the rest
         delete metadata['assetID'];
         delete metadata['thumbnail'];
 
         expect(metadata).to.deep.equal({
-            "objectType": 'ImageObject',
-            "contentType": 'image/jpeg',
+            'objectType': 'ImageObject',
+            'contentType': 'image/jpeg',
 
-            "canonicalURI": 'https://www.example.com/',
-            "matchingLinks": [ 'https://www.example.com/' ],
+            'canonicalURI': 'https://www.example.com/',
+            'matchingLinks': ['https://www.example.com/'],
 
-            "title": 'Test Asset',
-            "synopsis": 'Test Asset synopsis',
-            "license": 'Proprietary',
-            "tags": [],
-            "lastModifiedDate": '2017-04-18T19:54:40.000Z',
-            "revisionTag": '2017-04-18T19:54:40.000Z',
+            'title': 'Test Asset',
+            'synopsis': 'Test Asset synopsis',
+            'license': 'Proprietary',
+            'tags': [],
+            'lastModifiedDate': '2017-04-18T19:54:40.000Z',
+            'revisionTag': '2017-04-18T19:54:40.000Z',
         });
 
         const data = asset.to_data();
@@ -399,10 +412,10 @@ describe('ImageAsset', function() {
     });
 });
 
-describe('BlogArticle', function() {
+describe('BlogArticle', () => {
     let asset;
 
-    beforeEach(function() {
+    beforeEach(() => {
         asset = new libingester.BlogArticle();
         asset.set_title('Test Asset');
         asset.set_license('Proprietary');
@@ -413,11 +426,11 @@ describe('BlogArticle', function() {
         asset.set_author('Coco');
         asset.set_date_published(new Date(1492545280000));
         asset.set_read_more_text('More!');
-        asset.set_tags(['some', 'tags']);
+        asset.set_tags([ 'some', 'tags' ]);
         asset.set_as_static_page();
     });
 
-    it('can serialize out correctly', function() {
+    it('can serialize out correctly', () => {
         asset.render();
 
         const metadata = asset.to_metadata();
@@ -431,25 +444,25 @@ describe('BlogArticle', function() {
         delete metadata['document'];
 
         expect(metadata).to.deep.eql({
-            "objectType": 'ArticleObject',
-            "contentType": 'text/html',
+            'objectType': 'ArticleObject',
+            'contentType': 'text/html',
 
-            "canonicalURI": 'https://www.example.com/',
-            "matchingLinks": [ 'https://www.example.com/' ],
+            'canonicalURI': 'https://www.example.com/',
+            'matchingLinks': ['https://www.example.com/'],
 
-            "title": 'Test Asset',
-            "license": 'Proprietary',
-            "tags": ["some", "tags", "EknStaticTag"],
-            "synopsis": 'a long time ago...',
-            "lastModifiedDate": '2017-04-18T19:54:40.000Z',
-            "revisionTag": '2017-04-18T19:54:40.000Z',
+            'title': 'Test Asset',
+            'license': 'Proprietary',
+            'tags': [ 'some', 'tags', 'EknStaticTag' ],
+            'synopsis': 'a long time ago...',
+            'lastModifiedDate': '2017-04-18T19:54:40.000Z',
+            'revisionTag': '2017-04-18T19:54:40.000Z',
 
-            "authors": ['Coco'],
-            "published": '2017-04-18T19:54:40.000Z',
+            'authors': ['Coco'],
+            'published': '2017-04-18T19:54:40.000Z',
         });
     });
 
-    it('renders the custom stylesheet', function() {
+    it('renders the custom stylesheet', () => {
         asset.set_custom_scss('@import "_default"; * { color:red; }');
         asset.render();
 
@@ -457,7 +470,7 @@ describe('BlogArticle', function() {
         // Regex handles how libsass might minify the rendered CSS
         expect(metadata['document']).to.match(/\*\s*{\s*color:\s*red;?\s*}/);
     });
-    it('cleans newlines from synopsis', function() {
+    it('cleans newlines from synopsis', () => {
         asset.set_synopsis('This is a line.\nThis is the same line.\n');
         asset.render();
         const metadata = asset.to_metadata();
@@ -465,27 +478,27 @@ describe('BlogArticle', function() {
     });
 });
 
-describe('NewsAsset', function() {
+describe('NewsAsset', () => {
     let asset;
 
-    beforeEach(function () {
+    beforeEach(() => {
         asset = new libingester.NewsArticle();
         asset.set_title('Test Asset');
         asset.set_license('Proprietary');
         asset.set_canonical_uri('https://www.example.com/');
         asset.set_last_modified_date(new Date(1492545280000));
         asset.set_body('<h1>Word of the Day</h1>');
-        asset.set_section("word_of_day");
+        asset.set_section('word_of_day');
         asset.set_synopsis('a long time ago...');
         asset.set_as_static_page();
-        asset.set_authors(['Merriam', 'Webster']);
+        asset.set_authors([ 'Merriam', 'Webster' ]);
         asset.set_source('Dictionary');
         asset.set_date_published(new Date(1492545280000));
         asset.set_read_more_link('More!');
         asset.set_lede('<p>Exciting paragraph</p>');
     });
 
-    it('can serialize out correctly', function() {
+    it('can serialize out correctly', () => {
         asset.render();
 
         const metadata = asset.to_metadata();
@@ -500,26 +513,26 @@ describe('NewsAsset', function() {
         delete metadata['document'];
 
         expect(metadata).to.deep.eql({
-            "objectType": 'ArticleObject',
-            "contentType": 'text/html',
+            'objectType': 'ArticleObject',
+            'contentType': 'text/html',
 
-            "canonicalURI": 'https://www.example.com/',
-            "matchingLinks": [ 'https://www.example.com/' ],
+            'canonicalURI': 'https://www.example.com/',
+            'matchingLinks': ['https://www.example.com/'],
 
-            "title": 'Test Asset',
-            "license": 'Proprietary',
-            "tags": ["word_of_day", "EknStaticTag"],
-            "synopsis": 'a long time ago...',
-            "lastModifiedDate": '2017-04-18T19:54:40.000Z',
-            "revisionTag": '2017-04-18T19:54:40.000Z',
+            'title': 'Test Asset',
+            'license': 'Proprietary',
+            'tags': [ 'word_of_day', 'EknStaticTag' ],
+            'synopsis': 'a long time ago...',
+            'lastModifiedDate': '2017-04-18T19:54:40.000Z',
+            'revisionTag': '2017-04-18T19:54:40.000Z',
 
-            "authors": ['Merriam', 'Webster'],
-            "sourceName": 'Dictionary',
-            "published": '2017-04-18T19:54:40.000Z',
+            'authors': [ 'Merriam', 'Webster' ],
+            'sourceName': 'Dictionary',
+            'published': '2017-04-18T19:54:40.000Z',
         });
     });
 
-    it('renders the default stylesheet if no custom SCSS set', function () {
+    it('renders the default stylesheet if no custom SCSS set', () => {
         asset.render();
 
         const metadata = asset.to_metadata();
@@ -528,7 +541,7 @@ describe('NewsAsset', function() {
         expect(metadata['document']).to.match(/<style(.|\n)*{(.|\n)*:(.|\n)*}(.|\n)*<\/style>/);
     });
 
-    it('renders the custom SCSS', function () {
+    it('renders the custom SCSS', () => {
         asset.set_custom_scss('@import "_default"; * { color:red; }');
         asset.render();
 
@@ -537,8 +550,7 @@ describe('NewsAsset', function() {
         expect(metadata['document']).to.match(/\*\s*{\s*color:\s*red;?\s*}/);
     });
 
-    it('cannot use set_tags', function() {
+    it('cannot use set_tags', () => {
         expect(asset.set_tags).to.throw();
     });
-
 });
