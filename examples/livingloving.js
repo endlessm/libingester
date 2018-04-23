@@ -2,9 +2,9 @@
 
 const libingester = require('libingester');
 
-const rss_uri = "http://www.livingloving.net/feed/";
+const rssUri = 'http://www.livingloving.net/feed/';
 
-const img_metadata = [
+const imgMetadata = [
     'class',
     'data-jpibfi-indexer',
     'data-jpibfi-post-excerpt',
@@ -18,7 +18,7 @@ const img_metadata = [
     'width',
 ];
 
-const remove_elements = [
+const removeElements = [
     'iframe',
     'input',
     'noscript',
@@ -30,58 +30,58 @@ const remove_elements = [
     '[id*="more-"]',
 ];
 
-function ingest_article(hatch, uri) {
-    return libingester.util.fetch_html(uri).then(($profile) => {
-        let base_uri = libingester.util.get_doc_base_uri($profile, uri);
+function ingestArticle(hatch, uri) {
+    return libingester.util.fetch_html(uri).then($profile => {
+        const baseUri = libingester.util.get_doc_base_uri($profile, uri);
 
-        let modified_date = $profile('meta[property="article:modified_time"]').attr('content');
-        let article_entry = $profile('.post .post-heading .meta').first();
-        let article_data = $profile(article_entry).text().split(' • ');
-        let author = article_data[0];
-        let date_published = article_data[1];
-        let category = article_data[2];
-        let title = $profile('meta[property="og:title"]').attr('content');
-        let synopsis = $profile('meta[property="og:description"]').attr('content');
-        let body = $profile('.post-entry').first();
+        const modifiedDate = $profile('meta[property="article:modified_time"]').attr('content');
+        const articleEntry = $profile('.post .post-heading .meta').first();
+        const articleData = $profile(articleEntry).text().split(' • ');
+        const author = articleData[0];
+        const datePublished = articleData[1];
+        const title = $profile('meta[property="og:title"]').attr('content');
+        const synopsis = $profile('meta[property="og:description"]').attr('content');
+        const body = $profile('.post-entry').first();
 
-        let tags = $profile('a[rel="category tag"]').map(function() {
+        const tags = $profile('a[rel="category tag"]').map(function () {
             return $profile(this).text();
         }).get();
 
-        let meta = $profile('.post .post-heading .meta').first();
-        meta.find(".bullet").remove();
+        const meta = $profile('.post .post-heading .meta').first();
+        meta.find('.bullet').remove();
 
-        let main_img = $profile('.post-img a img');
-        let main_image = libingester.util.download_img(main_img, base_uri);
-        main_image.set_title(title);
-        hatch.save_asset(main_image);
+        const mainImg = $profile('.post-img a img');
+        const mainImage = libingester.util.download_img(mainImg, baseUri);
+        mainImage.set_title(title);
+        hatch.save_asset(mainImage);
 
-        body.find("img").map(function() {
-            if (this.attribs.src != undefined) {
-                let image = libingester.util.download_img(this, base_uri);
+        // eslint-disable-next-line array-callback-return
+        body.find('img').map(function () {
+            if (typeof this.attribs.src !== 'undefined') {
+                const image = libingester.util.download_img(this, baseUri);
                 image.set_title(title);
                 hatch.save_asset(image);
-                this.attribs["data-libingester-asset-id"] = image.asset_id;
-                for (let img_meta of img_metadata) {
-                    delete this.attribs[img_meta];
+                this.attribs['data-libingester-asset-id'] = image.asset_id;
+                for (const imgMeta of imgMetadata) {
+                    delete this.attribs[imgMeta];
                 }
             }
         });
 
-        for (let remove_element of remove_elements) {
-            body.find(remove_element).remove();
+        for (const removeElement of removeElements) {
+            body.find(removeElement).remove();
         }
 
-        let asset = new libingester.BlogArticle();
+        const asset = new libingester.BlogArticle();
         asset.set_canonical_uri(uri);
-        asset.set_last_modified_date(new Date(Date.parse(modified_date)));
+        asset.set_last_modified_date(new Date(Date.parse(modifiedDate)));
         asset.set_title(title);
         asset.set_synopsis(synopsis);
-        asset.set_thumbnail(main_image);
+        asset.set_thumbnail(mainImage);
         asset.set_author(author);
-        asset.set_date_published(date_published);
+        asset.set_date_published(datePublished);
         asset.set_license('Proprietary');
-        asset.set_main_image(main_image);
+        asset.set_main_image(mainImage);
         asset.set_main_image_caption('Image Caption');
         asset.set_body(body);
         asset.set_tags(tags);
@@ -108,10 +108,12 @@ function ingest_article(hatch, uri) {
 }
 
 function main() {
-    let hatch = new libingester.Hatch('livingloving', 'id');
-    libingester.util.fetch_rss_entries(rss_uri).then(items => {
-        let articles_links = items.map((datum) => datum.link);
-        Promise.all(articles_links.map((uri) => ingest_article(hatch, uri))).then(() => hatch.finish());
+    const hatch = new libingester.Hatch('livingloving', 'id');
+    libingester.util.fetch_rss_entries(rssUri).then(items => {
+        const articlesLinks = items.map(datum => datum.link);
+        Promise.all(articlesLinks.map(uri => {
+            return ingestArticle(hatch, uri);
+        })).then(() => hatch.finish());
     });
 }
 

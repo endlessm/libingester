@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-nested-ternary
 'use strict';
 
 const expect = require('chai').expect;
@@ -34,11 +35,11 @@ describe('ImageAsset', () => {
         const metadata = asset.to_metadata();
 
         // Check that asset ID and thumbnail asset ID are passed through
-        expect(metadata['assetID']).to.equal(asset.asset_id);
-        expect(metadata['thumbnail']).to.equal(thumbnailAsset.asset_id);
+        expect(metadata.assetID).to.equal(asset.asset_id);
+        expect(metadata.thumbnail).to.equal(thumbnailAsset.asset_id);
         // Remove the ID fields before checking the rest
-        delete metadata['assetID'];
-        delete metadata['thumbnail'];
+        delete metadata.assetID;
+        delete metadata.thumbnail;
 
         expect(metadata).to.deep.equal({
             'objectType': 'ImageObject',

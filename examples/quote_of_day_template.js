@@ -1,6 +1,6 @@
 'use strict';
 
-const structure_template = (`
+const structure_template = `
 <section class="title">
   <h1 id="title">{{ title }}</h1>
   <p id="date">{{ date }}</p>
@@ -15,6 +15,6 @@ const structure_template = (`
     <p id="quoteAuthor">{{ quoteAuthor }}</p>
 
     <br/>
-</section>`);
+</section>`;
 
 exports.structure_template = structure_template;
