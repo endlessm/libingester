@@ -25,7 +25,13 @@ LGPL v2.1
 ### Linting (eslint):
  ```
  $ sudo npm install -g eslint
+
+ $ # Only show errors
+ $ eslint --quiet .
+
+ $ # Show errors and warnings
  $ eslint .
+
  ```
 
 ©2017-2018 Endless Mobile

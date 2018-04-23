@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-nested-ternary
 'use strict';
 
 const expect = require('chai').expect;
@@ -60,7 +61,7 @@ function rmrf(dir) {
 }
 
 function createAssets(n) {
-    let result = [];
+    const result = [];
     for (let i = 0; i < n; i++) {
         result.push(new MockAsset());
     }
@@ -114,9 +115,12 @@ describe('Hatch', () => {
 
         it('requires name and lang parameters to instantiate', () => {
             expect(() => {
+                // eslint-disable-next-line no-new
                 new libingester.Hatch();
             }).to.throw();
+
             expect(() => {
+                // eslint-disable-next-line no-new
                 new libingester.Hatch('abcd');
             }).to.throw();
         });
@@ -125,6 +129,7 @@ describe('Hatch', () => {
         //      need to use the newer api.
         it('requires second param to be a string', () => {
             expect(() => {
+                // eslint-disable-next-line no-new
                 new libingester.Hatch('abcd', { foo: 'bar' });
             }).to.throw();
         });
@@ -237,7 +242,7 @@ describe('Hatch', () => {
         it('can process urls correctly from passed in argv', () => {
             const argv = [ '--urls', 'https://foo.com', 'https://bar.com' ];
             hatch = new libingester.Hatch('abcd', 'en',
-                                          { argv: argv });
+                                          { argv });
             expect(hatch.get_urls()).to.have.members([ 'https://foo.com',
                                                        'https://bar.com' ]);
         });
@@ -375,12 +380,13 @@ describe('MockAsset', () => {
         const asset = new MockAsset();
         asset.set_tags([ 'some', 'tags' ]);
         const metadata = asset.to_metadata();
-        expect(metadata['tags']).to.deep.equal([ 'some', 'tags' ]);
+        expect(metadata.tags).to.deep.equal([ 'some', 'tags' ]);
     });
 
     it('can set null synopsis', () => {
         const asset = new MockAsset();
         expect(() => {
+            // eslint-disable-next-line no-undefined
             asset.set_synopsis(undefined);
         }).to.not.throw();
     });

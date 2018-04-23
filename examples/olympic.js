@@ -5,17 +5,17 @@ const rp = require('request-promise');
 const url = require('url');
 const libingester = require('libingester');
 
-function ingest_profile(hatch, uri) {
-    return libingester.util.fetch_html(uri).then(($profile) => {
-        const base_uri = libingester.util.get_doc_base_uri($profile, uri);
+function ingestProfile(hatch, uri) {
+    return libingester.util.fetch_html(uri).then($profile => {
+        const baseUri = libingester.util.get_doc_base_uri($profile, uri);
 
         const asset = new libingester.NewsArticle();
         asset.set_canonical_uri(uri);
 
         // Pull out the last-modified date.
-        const modified_str = $profile('meta[property="article:modified_time"]').attr('content');
-        const modified_date = new Date(Date.parse(modified_str));
-        asset.set_last_modified_date(modified_date);
+        const modifiedStr = $profile('meta[property="article:modified_time"]').attr('content');
+        const modifiedDate = new Date(Date.parse(modifiedStr));
+        asset.set_last_modified_date(modifiedDate);
 
         // Pull out the description.
         const description = $profile('meta[name="description"]').attr('content');
@@ -33,44 +33,45 @@ function ingest_profile(hatch, uri) {
         const bio = $profile('[itemtype="http://schema.org/NewsArticle"]').first();
         bio.find('.btn-more').remove();
 
-        // XXX: Cheerio doesn't support .unwrap(), see https://github.com/cheeriojs/cheerio/pull/851/files
-        const bio_extra_content = bio.find('.extraContent');
-        bio_extra_content.replaceWith($profile.html(bio_extra_content.get(0).children));
+        // XXX: Cheerio doesn't support .unwrap()
+        // see https://github.com/cheeriojs/cheerio/pull/851/files
+        const bioExtraContent = bio.find('.extraContent');
+        bioExtraContent.replaceWith($profile.html(bioExtraContent.get(0).children));
 
-        const headshot_img = $profile('.profile-box picture img').first();
-        const headshot_image = libingester.util.download_img(headshot_img, base_uri);
-        hatch.save_asset(headshot_image);
+        const headshotImg = $profile('.profile-box picture img').first();
+        const headshotImage = libingester.util.download_img(headshotImg, baseUri);
+        hatch.save_asset(headshotImage);
 
         // Use the profile image as article thumbnail
-        asset.set_thumbnail(headshot_image);
+        asset.set_thumbnail(headshotImage);
 
-        const image_gallery = $profile('.Collage img').map(function() {
-            const asset = libingester.util.download_img(this, base_uri);
-            hatch.save_asset(asset);
-            return asset;
+        const imageGallery = $profile('.Collage img').map(function () {
+            const imgAsset = libingester.util.download_img(this, baseUri);
+            hatch.save_asset(imgAsset);
+            return imgAsset;
         }).get();
 
         // Construct a new document containing the content we want.
-        const template = (`
+        const template = `
 <section class="title">
   <h1>{{ title }}</h1>
-  <img data-libingester-asset-id="{{headshot_image.asset_id}}">
+  <img data-libingester-asset-id="{{headshotImage.asset_id}}">
 </section>
 
-{{{ bio_html }}}
+{{{ bioHtml }}}
 
 <section class="gallery">
   <h2>Gallery</h2>
-  {{#image_gallery}}
+  {{#imageGallery}}
   <img data-libingester-asset-id="{{asset_id}}">
-  {{/image_gallery}}
-</section>`);
+  {{/imageGallery}}
+</section>`;
 
         const content = mustache.render(template, {
-            title: title,
-            headshot_image: headshot_image,
-            image_gallery: image_gallery,
-            bio_html: bio.html(),
+            title,
+            headshotImage,
+            imageGallery,
+            bioHtml: bio.html(),
         });
 
         // TODO: Convert to v2.0 API
@@ -87,11 +88,11 @@ function ingest_profile(hatch, uri) {
 function main() {
     const hatch = new libingester.Hatch('olympic', 'en');
 
-    const base_uri = 'https://www.olympic.org/';
-    const profiles_list = 'https://www.olympic.org/ajaxscript/loadmoretablelist/games/athletes/%7BA5FEFBC6-8FF7-4B0A-A96A-EB7943EA4E2F%7D/100/0';
-    rp({ uri: profiles_list, json: true }).then((response) => {
-        const profile_uris = response.content.map((datum) => url.resolve(base_uri, datum.urlName));
-        return Promise.all(profile_uris.map((uri) => ingest_profile(hatch, uri)));
+    const baseUri = 'https://www.olympic.org/';
+    const profilesList = 'https://www.olympic.org/ajaxscript/loadmoretablelist/games/athletes/%7BA5FEFBC6-8FF7-4B0A-A96A-EB7943EA4E2F%7D/100/0';
+    rp({ uri: profilesList, json: true }).then(response => {
+        const profileUris = response.content.map(datum => url.resolve(baseUri, datum.urlName));
+        return Promise.all(profileUris.map(uri => ingestProfile(hatch, uri)));
     }).then(() => {
         return hatch.finish();
     });

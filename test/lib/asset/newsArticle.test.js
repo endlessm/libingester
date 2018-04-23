@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-nested-ternary
 'use strict';
 
 const expect = require('chai').expect;
@@ -46,12 +47,12 @@ describe('NewsArticle', () => {
 
         // Remove randomness -- should probably be a mock if I can
         // figure out how to use it.
-        delete metadata['assetID'];
+        delete metadata.assetID;
 
-        expect(metadata['document']).to.contain('<h1>Word of the Day</h1>');
-        expect(metadata['document']).to.contain('More!');
-        expect(metadata['document']).to.contain('<p>Exciting paragraph</p>');
-        delete metadata['document'];
+        expect(metadata.document).to.contain('<h1>Word of the Day</h1>');
+        expect(metadata.document).to.contain('More!');
+        expect(metadata.document).to.contain('<p>Exciting paragraph</p>');
+        delete metadata.document;
 
         expect(metadata).to.deep.eql({
             'objectType': 'ArticleObject',
@@ -79,7 +80,7 @@ describe('NewsArticle', () => {
         const metadata = asset.to_metadata();
 
         // Match at least one CSS rule despite no custom SCSS
-        expect(metadata['document']).to.match(/<style(.|\n)*{(.|\n)*:(.|\n)*}(.|\n)*<\/style>/);
+        expect(metadata.document).to.match(/<style(.|\n)*{(.|\n)*:(.|\n)*}(.|\n)*<\/style>/);
     });
 
     it('renders the custom SCSS', () => {
@@ -88,7 +89,7 @@ describe('NewsArticle', () => {
 
         const metadata = asset.to_metadata();
         // Regex handles how libsass might minify the rendered CSS
-        expect(metadata['document']).to.match(/\*\s*{\s*color:\s*red;?\s*}/);
+        expect(metadata.document).to.match(/\*\s*{\s*color:\s*red;?\s*}/);
     });
 
     it('cannot use set_tags', () => {

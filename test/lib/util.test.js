@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-nested-ternary
 'use strict';
 
 const expect = require('chai').expect;
@@ -18,18 +19,18 @@ const _RSS_JSON = fs.readFileSync(`${__dirname}/test_files/rss-feeds.json`);
 const FEEDS = JSON.parse(_RSS_JSON, jsonDateParser);
 
 const FEED_PAGES = [
-    [ 'http://simple-site.com/rss', FEEDS['simple'] ],
-    [ 'https://simple2.com/rss', FEEDS['simple_2'] ],
-    [ 'http://feed-with-dups', FEEDS['dups'] ],
-    [ 'http://my-site.com/rss', FEEDS['A_page_1'] ],
-    [ 'http://my-site.com/rss?paged=1', FEEDS['A_page_1'] ],
-    [ 'http://my-site.com/rss?paged=2', FEEDS['A_page_2'] ],
-    [ 'http://my-site.com/rss?paged=3', FEEDS['A_page_3'] ],
-    [ 'http://my-site.com/rss?paged=4', FEEDS['A_page_4'] ],
-    [ 'http://another.com/feed', FEEDS['B_page_1'] ],
-    [ 'http://another.com/feed?paged=1', FEEDS['B_page_1'] ],
-    [ 'http://another.com/feed?paged=2', FEEDS['B_page_2'] ],
-    [ 'http://another.com/feed?paged=3', FEEDS['B_page_3'] ],
+    [ 'http://simple-site.com/rss', FEEDS.simple ],
+    [ 'https://simple2.com/rss', FEEDS.simple_2 ],
+    [ 'http://feed-with-dups', FEEDS.dups ],
+    [ 'http://my-site.com/rss', FEEDS.A_page_1 ],
+    [ 'http://my-site.com/rss?paged=1', FEEDS.A_page_1 ],
+    [ 'http://my-site.com/rss?paged=2', FEEDS.A_page_2 ],
+    [ 'http://my-site.com/rss?paged=3', FEEDS.A_page_3 ],
+    [ 'http://my-site.com/rss?paged=4', FEEDS.A_page_4 ],
+    [ 'http://another.com/feed', FEEDS.B_page_1 ],
+    [ 'http://another.com/feed?paged=1', FEEDS.B_page_1 ],
+    [ 'http://another.com/feed?paged=2', FEEDS.B_page_2 ],
+    [ 'http://another.com/feed?paged=3', FEEDS.B_page_3 ],
 ];
 
 describe('encode_uri', () => {
@@ -89,6 +90,7 @@ describe('download_img', () => {
         const $doc = cheerio.load(html);
         const $images = $doc('img');
 
+        // eslint-disable-next-line array-callback-return
         $images.map(function () {
             // `this` refers to an internal Cheerio "node" object which
             // doesn't have most of the bells and whistles of a normal
@@ -97,6 +99,7 @@ describe('download_img', () => {
         });
 
         const $imageLinks = $doc('a');
+        // eslint-disable-next-line array-callback-return
         $imageLinks.map(function () {
             const $imageLink = cheerio(this);
             expect($imageLink.length).to.equal(1);
@@ -131,10 +134,10 @@ describe('download_img', () => {
             const imageSha256Hash = 'e7f555cc474b1d12a52cb9b9fa012a3502e8a2d972e19d49a898629937ac13ca';
 
             // We want this as a string
-            let imageUrl = imageUrlFile.toString();
+            const imageUrl = imageUrlFile.toString();
 
-            if (imageUrl === undefined || imageUrl.length <= 0 ||
-                image === undefined || image.length <= 0) {
+            if (typeof imageUrl === 'undefined' || imageUrl.length <= 0 ||
+                typeof image === 'undefined' || image.length <= 0) {
                 throw new Error('Invalid data loaded from test image');
             }
 
@@ -158,11 +161,11 @@ describe('download_img', () => {
             const imageSha256Hash = '1bc8db1d29ab4d12a8d4296de97ec0b26aa6f666a8e12bc9ff78016274120363';
 
             // We want this as a string
-            let imageUrl = imageUrlFile.toString();
+            const imageUrl = imageUrlFile.toString();
 
-            if (imageUrl === undefined || imageUrl.length <= 0 ||
-                image === undefined || image.length <= 0) {
-              throw new Error('Invalid data loaded from test image');
+            if (typeof imageUrl === 'undefined' || imageUrl.length <= 0 ||
+                typeof image === 'undefined' || image.length <= 0) {
+                throw new Error('Invalid data loaded from test image');
             }
 
             const imageTag = cheerio(`<img src=${imageUrl}>test</img>`);

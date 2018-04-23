@@ -3,7 +3,8 @@
 const url = require('url');
 const libingester = require('libingester');
 
-const HOMEPAGE = 'http://www.thefreedictionary.com/_/archive.htm'; // Home section
+// home section
+const HOMEPAGE = 'http://www.thefreedictionary.com/_/archive.htm';
 
 
 function ingest_article(hatch, item) {
@@ -16,19 +17,23 @@ function ingest_article(hatch, item) {
         const modifiedDate = new Date(Date.parse(articleDate));
 
         // Pluck quoteAuthor
-        const author = $('table.widget', 'div#colleft').last().find('p').text();
+        const author = $('table.widget', 'div#colleft').last()
+                                                       .find('p')
+                                                       .text();
         asset.set_authors(author);
 
         // Pluck quoteText
-        const quoteText = $('table.widget', 'div#colleft').last().find('span').text();
+        const quoteText = $('table.widget', 'div#colleft').last()
+                                                          .find('span')
+                                                          .text();
         asset.set_title(quoteText);
 
         // article settings
         asset.set_canonical_uri(item);
         asset.set_last_modified_date(modifiedDate);
         asset.set_date_published(modifiedDate);
-        asset.set_source("TheFreeDictionary.com");
-        asset.set_section("quote_of_day");
+        asset.set_source('TheFreeDictionary.com');
+        asset.set_section('quote_of_day');
         asset.set_body(quoteText);
         asset.set_custom_scss(`
           $primary-light-color: #898989;
@@ -45,32 +50,32 @@ function ingest_article(hatch, item) {
         `);
 
         // lede and read_more are set to empty strings to avoid errors
-        const lede = "";
+        const lede = '';
         asset.set_lede(lede);
 
-        const read_more = "";
-        asset.set_read_more_link(read_more);
+        const readMore = '';
+        asset.set_read_more_link(readMore);
 
         asset.render();
         hatch.save_asset(asset);
     })
     .catch(err => {
-      console.log(err.stack);
-      throw err;
+        console.log(err.stack);
+        throw err;
     });
 }
 
 function main() {
     const hatch = new libingester.Hatch('quote_of_day', 'en');
-    libingester.util.fetch_html(HOMEPAGE).then(($pages) => {
-      // retrieve article URLs; '-2n+2' returns ~30 articles instead of 2,000+
-      //                        '-n+28' returns ~901 articles
-            const articles_links = $pages('#Calendar div:nth-child(-n + 28) a').map(function() {
+    libingester.util.fetch_html(HOMEPAGE).then($pages => {
+        // retrieve article URLs; '-2n+2' returns ~30 articles instead of 2,000+
+        //                        '-n+28' returns ~901 articles
+        const articlesLinks = $pages('#Calendar div:nth-child(-n + 28) a').map(function () {
             const uri = $pages(this).attr('href');
             return url.resolve(HOMEPAGE, uri);
         }).get();
 
-        Promise.all(articles_links.map((uri) => ingest_article(hatch, uri))).then(() => {
+        Promise.all(articlesLinks.map(uri => ingest_article(hatch, uri))).then(() => {
             return hatch.finish();
         }).catch(console.log);
     });

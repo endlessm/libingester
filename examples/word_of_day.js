@@ -3,10 +3,11 @@
 const url = require('url');
 const libingester = require('libingester');
 
-const HOMEPAGE = 'http://www.thefreedictionary.com/_/archive.htm'; // Home section
+// Home section
+const HOMEPAGE = 'http://www.thefreedictionary.com/_/archive.htm';
 
 
-function ingest_article(hatch, item) {
+function ingestArticle(hatch, item) {
     return libingester.util.fetch_html(item).then($ => {
         const asset = new libingester.DictionaryAsset();
 
@@ -16,27 +17,30 @@ function ingest_article(hatch, item) {
         const modifiedDate = new Date(Date.parse(articleDate));
 
         // Set title
-        const title = "Word of the Day: " + articleDate;
+        const title = `Word of the Day: ${articleDate}`;
         asset.set_title(title);
 
         // Pluck wordOfDay
-        const wordOfDay = $('table.widget', 'div#colleft').first().find('h3').children().text();
+        const wordOfDay = $('table.widget', 'div#colleft').first()
+                                                          .find('h3')
+                                                          .children()
+                                                          .text();
         asset.set_word(wordOfDay);
 
         // Pluck wordOfDayDef
         const wordOfDayMixedString = $('td:contains("Definition:")').next().text();
-        const wordOfDayDef = wordOfDayMixedString.slice(wordOfDayMixedString.indexOf(" ")).trim();
+        const wordOfDayDef = wordOfDayMixedString.slice(wordOfDayMixedString.indexOf(' ')).trim();
         asset.set_definition(wordOfDayDef);
 
         // Pluck wordOfDayType
-        const wordTypeBlob = wordOfDayMixedString.split(" ")[0];
-        const wordOfDayType = wordTypeBlob.substr(1, wordTypeBlob.length-2);
+        const wordTypeBlob = wordOfDayMixedString.split(' ')[0];
+        const wordOfDayType = wordTypeBlob.substr(1, wordTypeBlob.length - 2);
         asset.set_part_of_speech(wordOfDayType);
 
         // article settings
         asset.set_canonical_uri(item);
         asset.set_last_modified_date(modifiedDate);
-        asset.set_source("thefreedictionary.com");
+        asset.set_source('thefreedictionary.com');
         asset.set_tags('word_of_day');
         asset.set_body(wordOfDayDef);
         asset.set_custom_scss(`
@@ -56,22 +60,22 @@ function ingest_article(hatch, item) {
         asset.render();
         hatch.save_asset(asset);
     }).catch(err => {
-      console.log(err.stack);
-      throw err;
+        console.log(err.stack);
+        throw err;
     });
 }
 
 function main() {
     const hatch = new libingester.Hatch('word_of_day', 'en');
-    libingester.util.fetch_html(HOMEPAGE).then(($pages) => {
-      // retrieve article URLs; '-2n+2' returns ~30 articles instead of 2,000+
-      //                        '-n+28' returns ~901 articles
-            const articles_links = $pages('#Calendar div:nth-child(-2n + 2) a').map(function() {
+    libingester.util.fetch_html(HOMEPAGE).then($pages => {
+        // retrieve article URLs; '-2n+2' returns ~30 articles instead of 2,000+
+        //                        '-n+28' returns ~901 articles
+        const articlesLinks = $pages('#Calendar div:nth-child(-2n + 2) a').map(function () {
             const uri = $pages(this).attr('href');
             return url.resolve(HOMEPAGE, uri);
         }).get();
 
-        Promise.all(articles_links.map((uri) => ingest_article(hatch, uri))).then(() => {
+        Promise.all(articlesLinks.map(uri => ingestArticle(hatch, uri))).then(() => {
             return hatch.finish();
         }).catch(console.log);
     });

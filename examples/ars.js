@@ -7,14 +7,14 @@ const Libingester = require('libingester');
 const FEED_URI = 'http://feeds.arstechnica.com/arstechnica/open-source';
 const COMMENT_NODE = 8;
 
-function remove_intermediate($, selector) {
+function removeIntermediate($, selector) {
     $(selector).each((i, elem) => $(elem).replaceWith($(elem).contents()));
 }
 
-function ingest_article(hatch, entry) {
+function ingestArticle(hatch, entry) {
     return Libingester.util.fetch_html(entry.link).then($ => {
         const BASE_URI = Libingester.util.get_doc_base_uri($, entry.link);
-        let asset = new Libingester.NewsArticle();
+        const asset = new Libingester.NewsArticle();
 
         console.log('processing', entry.title);
         asset.set_title(entry.title);
@@ -36,53 +36,56 @@ function ingest_article(hatch, entry) {
             @import '_default';
         `);
 
-        let canonical_uri = $('head link[rel="canonical"]').attr('href');
-        asset.set_canonical_uri(canonical_uri);
-        asset.set_read_more_link(`Read more at <a href="${canonical_uri}">Ars Technica</a>`);
+        const canonicalUri = $('head link[rel="canonical"]').attr('href');
+        asset.set_canonical_uri(canonicalUri);
+        asset.set_read_more_link(`Read more at <a href="${canonicalUri}">Ars Technica</a>`);
 
-        let thumb_uri = $('meta[property="og:image"]').attr('content');
-        let thumb_asset = Libingester.util.download_image(thumb_uri);
-        hatch.save_asset(thumb_asset);
-        asset.set_thumbnail(thumb_asset);
+        const thumbUri = $('meta[property="og:image"]').attr('content');
+        const thumbAsset = Libingester.util.download_image(thumbUri);
+        hatch.save_asset(thumbAsset);
+        asset.set_thumbnail(thumbAsset);
 
         // Clean up
         $('div').filter(function () {
             return $(this).text().trim() === '';
         }).remove();
         $('head, script, .site-header, .ad, #social-left').remove();
-        ['.site-wrapper', '.content-wrapper', '.column-wrapper', '.left-column',
-            '.article-content'].forEach(sel => remove_intermediate($, sel));
-        $('.page-numbers').remove();  // oops, should deal with multiple pages
+        [ '.site-wrapper', '.content-wrapper', '.column-wrapper', '.left-column',
+          '.article-content' ].forEach(sel => removeIntermediate($, sel));
+
+        // oops, should deal with multiple pages
+        $('.page-numbers').remove();
         $(`.story-sidebar, .enlarge-link, .post-upperdek, .article-author,
             #social-footer, #article-footer-wrap, .site-footer, .tools-info,
             #promoted-comments`).remove();
         $('*').contents().each(function () {
-            if(this.nodeType === COMMENT_NODE) {
+            if (this.nodeType === COMMENT_NODE) {
                 $(this).remove();
             }
         });
 
-        let authors = $('header [itemprop~="author"] [itemprop~="name"]')
+        const authors = $('header [itemprop~="author"] [itemprop~="name"]')
             .map((i, elem) => $(elem).text())
             .get();
         asset.set_authors(authors);
         $('header').remove();
 
-        let main_candidates = $('figure.intro-image');
-        if (!main_candidates.length)
-            main_candidates = $('figure');
-        if (main_candidates.length) {
-            let main = main_candidates.first();
-            let img = $('img', main);
-            let img_asset = Libingester.util.download_img(img, BASE_URI);
-            hatch.save_asset(img_asset);
-            asset.set_main_image(img_asset, $('figcaption', main));
-            $(main).remove();
+        let mainCandidates = $('figure.intro-image');
+        if (!mainCandidates.length) {
+            mainCandidates = $('figure');
+        }
+        if (mainCandidates.length) {
+            const mainCandidate = mainCandidates.first();
+            const img = $('img', main);
+            const imgAsset = Libingester.util.download_img(img, BASE_URI);
+            hatch.save_asset(imgAsset);
+            asset.set_main_image(imgAsset, $('figcaption', mainCandidate));
+            $(mainCandidate).remove();
         }
 
-        let first_para = $('section p').first();
-        asset.set_lede(first_para);
-        $(first_para).remove();
+        const firstPara = $('section p').first();
+        asset.set_lede(firstPara);
+        $(firstPara).remove();
 
         // Clean up classes for readability
         $('body, article, section, figure, figcaption').removeAttr('class');
@@ -91,9 +94,9 @@ function ingest_article(hatch, entry) {
 
         // Save assets for any remaining figures
         $('figure').each(function () {
-            let fig_asset = Libingester.util.download_img($('img', this),
-                BASE_URI);
-            hatch.save_asset(fig_asset);
+            const figAsset = Libingester.util.download_img($('img', this),
+                                                           BASE_URI);
+            hatch.save_asset(figAsset);
         });
 
         asset.set_body($('section'));
@@ -108,9 +111,10 @@ function ingest_article(hatch, entry) {
 }
 
 function main() {
-    let hatch = new Libingester.Hatch('ars', 'en');
-    Libingester.util.fetch_rss_entries(FEED_URI).then(items =>
-        Promise.all(items.map(entry => ingest_article(hatch, entry))))
+    const hatch = new Libingester.Hatch('ars', 'en');
+    Libingester.util.fetch_rss_entries(FEED_URI).then(items => {
+        Promise.all(items.map(entry => ingestArticle(hatch, entry)));
+    })
     .then(() => hatch.finish())
     .catch(err => {
         console.log('there was an error', err);
