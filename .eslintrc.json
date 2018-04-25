@@ -268,7 +268,9 @@
         "valid-jsdoc": [
             "warn",
             {
-                "requireReturn": false
+                "requireReturn": false,
+                "requireReturnDescription": false,
+                "requireParamDescription": false
             }
         ],
         "vars-on-top": "error",
