@@ -7,11 +7,15 @@ const config = require('../../lib/config');
 
 
 describe('config', () => {
+    let processArgvRestore;
+
     beforeEach(() => {
         config.clean();
+        processArgvRestore = process.argv;
     });
     afterEach(() => {
         config.clean();
+        process.argv = processArgvRestore;
     });
     it('can parse options correctly', () => {
         const options = { argv: [ '--path', '/tmp/mypath',
@@ -43,5 +47,20 @@ describe('config', () => {
                                        '--retry-backoff-delay', '1000' ] });
         expect(config.get_setting('max-retries')).to.equal('10');
         expect(config.get_setting('retry-backoff-delay')).to.equal('1000');
+    });
+
+    it('can pass command line arguments', () => {
+        process.argv = [ 'node', 'my-ingester', '--path', '/tmp/mypath' ];
+        config.parse_options();
+        expect(config.get_setting('path')).to.equal('/tmp/mypath');
+    });
+
+    it('updates command line arguments', () => {
+        process.argv = [ 'node', 'my-ingester', '--path', '/tmp/mypath',
+                         '--no-tgz' ];
+        const options = { argv: [ '--path', './myNewPath' ] };
+        config.parse_options(options);
+        expect(config.get_setting('path')).to.equal('./myNewPath');
+        expect(config.get_setting('no-tgz')).to.be.true;
     });
 });
