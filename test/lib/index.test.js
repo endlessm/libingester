@@ -340,6 +340,14 @@ describe('Hatch', () => {
                 ]);
             });
         });
+
+        it.only('fails saving duplicated assets', () => {
+            const dupAsset = new MockAsset();
+            hatch.save_asset(dupAsset);
+            expect(() => {
+                hatch.save_asset(dupAsset);
+            }).to.throw(/duplicated assets/);
+        });
     });
 
     describe('builds hierarchy', () => {
