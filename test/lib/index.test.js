@@ -340,6 +340,18 @@ describe('Hatch', () => {
                 ]);
             });
         });
+
+        it('filters duplicated assets', () => {
+            const dupAsset = new MockAsset();
+            hatch.save_asset(dupAsset);
+            hatch.save_asset(dupAsset);
+
+            return hatch.finish().then(() => {
+                const manifest = readHatchManifest(hatch);
+                const assetIDs = manifest.assets.map(asset => asset.asset_id);
+                expect(assetIDs).to.deep.equal([dupAsset.asset_id]);
+            });
+        });
     });
 
     describe('builds hierarchy', () => {
