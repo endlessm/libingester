@@ -341,7 +341,7 @@ describe('Hatch', () => {
             });
         });
 
-        it.only('fails saving duplicated assets', () => {
+        it('fails saving duplicated assets', () => {
             const dupAsset = new MockAsset();
             hatch.save_asset(dupAsset);
             expect(() => {
