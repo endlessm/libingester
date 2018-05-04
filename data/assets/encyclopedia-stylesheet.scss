@@ -1,0 +1,208 @@
+@import 'base';
+
+$spacious-min-width: 1500px;
+$compact-max-width: 900px;
+
+body {
+    margin-top: 66px;
+}
+
+// Semantic elements
+
+figure {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+
+    img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+figcaption {
+    font-family: $support-font;
+    font-size: 0.8rem;
+    line-height: 1rem;
+    padding: 0.3rem 0;
+    p {
+        margin-bottom: 0;
+    }
+}
+
+blockquote {
+    color: $primary-light-color;
+    font-family: $support-font;
+    font-size: 1.5rem;
+    font-style: italic;
+    line-height: 1.333;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+// Page features
+
+.article-information {
+    align-items: flex-start;
+    align-content: flex-start;
+    display: flex;
+    justify-content: space-between;
+
+    .article-categories {
+        flex: 1;
+        max-width: 40vw;
+
+        p {
+            display: inline-block;
+        }
+    }
+
+    .article-support {
+        max-width: 20vw;
+    }
+
+    p {
+        margin-bottom: 0;
+    }
+}
+
+.article-title h1 {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.date-published, .source-link, .read-more {
+    font-family: $support-font;
+}
+
+.date-published, .source-link {
+    font-weight: bold;
+}
+
+.lede {
+    font-style: italic;
+    line-height: 1.5;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.read-more {
+    border-top: 1px solid #DDDDDD;
+    padding-bottom: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#default-share-actions {
+    position: fixed;
+    right: 7vw;
+    bottom: 45%;
+    border-radius: 1.4em;
+    box-shadow: none;
+    padding: 0.7em 0;
+    background-color: transparentize($body-background-color, 1 - 0.70);
+    line-height: 0;
+
+    a {
+        display: block;
+        padding: 0.6em 0.9em;
+        svg {
+            fill: rgba(0, 0, 0, 0.6);
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+        }
+    }
+}
+
+
+// Responsive Elements
+
+// Define all our responsive properties in terms of three parameters, then
+// include this mixin in the various media queries
+@mixin responsive-elements($body-size, $indent, $dedent) {
+    html {
+        font-size: $body-size;
+    }
+
+    body {
+        margin-left: $indent;
+        margin-right: $indent;
+    }
+
+    footer {
+        margin-left: -$indent;
+        margin-right: -$indent;
+    }
+
+    figure,
+    .article-information,
+    .article-title h1 {
+        margin-left: $dedent;
+        margin-right: $dedent;
+    }
+
+    .lede {
+        margin-left: $dedent;
+    }
+}
+
+@include responsive-elements($body-size: 20px, $indent: 20vw, $dedent: -4.2vw);
+
+@media (min-width: $spacious-min-width) {
+    @include responsive-elements($body-size: 24px, $indent: 24.2vw, $dedent: -4.2vw);
+
+    #default-share-actions {
+        right: 9vw;
+    }
+}
+
+@media (max-width: $compact-max-width) {
+    @include responsive-elements($body-size: 20px, $indent: 15vw, $dedent: 0);
+
+    figure {
+        margin-left: -15vw;
+        margin-right: -15vw;
+        figcaption {
+            margin-left: 15vw;
+            margin-right: 15vw;
+        }
+    }
+
+    #default-share-actions {
+        right: 4vw;
+    }
+}
+
+// Composite resolutions        
+@media  (device-width: 720px) and (device-height: 480px),
+        (device-width: 720px) and (device-height: 576px) {
+    @include responsive-elements($body-size: 20px, $indent: 10vw, $dedent: 0);
+
+    body {
+        margin-top: 30px;
+    }
+
+    figure {
+        margin-left: -10vw;
+        margin-right: -10vw;
+        figcaption {
+            margin-left: 10vw;
+            margin-right: 10vw;
+        }
+    }
+
+    .article-information .article-support {
+        max-width: 30vw;
+    }
+
+    #default-share-actions {
+        right: 1.5vw;
+        bottom: 25%;
+        a {
+            padding: 0.5em 0.7em;
+        }
+    }
+}

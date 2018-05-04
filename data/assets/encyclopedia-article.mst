@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+    <style>{{{stylesheet}}}</style>
+</head>
+
+<body>
+<header class="article-information">
+    <div class="article-categories">
+        <p id="context-link"></p>
+    </div>
+    <div class="article-support">
+        <p class="date-published" id="date-published"></p>
+        <p class="source-link">
+            <a class="eos-show-link" href="{{canonical_uri}}">
+                {{source}}
+            </a>
+        </p>
+    </div>
+</header>
+<div id="default-share-actions" class="share-actions"></div>
+<article>
+    <header class="article-title">
+        <h1>{{title}}</h1>
+    </header>
+    <section>
+        {{#main_image}}
+            <figure class="main">
+                <a data-soma-widget="ImageLink">
+                    <img data-soma-hint="ImportantImage" data-libingester-asset-id="{{asset_id}}">
+                </a>
+                {{{caption}}}
+            </figure>
+        {{/main_image}}
+        {{{body}}}
+    </section>
+</article>
+<footer>
+  <p class="source-link">
+      <a class="eos-show-link" href="{{canonical_uri}}">
+          {{source}}
+      </a>
+  </p>
+</footer>
+<script type="text/javascript">
+    if (window.contentMetadata) {
+        let metadata = window.contentMetadata;
+        let contextLink = document.getElementById('context-link');
+        contextLink.innerHTML = metadata.sets
+            .map(set => '<a class="eos-show-link" href="' + set.id + '">' +
+                set.title + '</a>')
+            .join(' | ');
+
+        if (metadata.published) {
+            let datePublishedField = document.getElementById('date-published');
+            let datePublished = new Date(metadata.published);
+            datePublishedField.innerHTML = datePublished.toLocaleDateString();
+        }
+    }
+</script>
+</body>
+</html>
