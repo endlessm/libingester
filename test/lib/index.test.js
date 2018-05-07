@@ -27,7 +27,7 @@ const libingester = proxyquire('../../lib/index', {
 
 class MockAsset extends BaseAsset {
     constructor() {
-        super(mockVerifier);
+        super({}, mockVerifier);
     }
 
     fails_with_error(err) {
