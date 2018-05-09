@@ -56,7 +56,7 @@ describe('GalleryImageArticle', () => {
 
         asset.render();
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
 
         delete hatchMetadata.assetID;
 
@@ -94,7 +94,7 @@ describe('GalleryImageArticle', () => {
 
         asset.render();
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
         delete hatchMetadata.assetID;
         delete hatchMetadata.document;
 

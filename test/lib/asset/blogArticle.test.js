@@ -61,7 +61,7 @@ describe('BlogArticle', () => {
     it('can serialize out correctly', () => {
         asset.render();
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
 
         delete hatchMetadata.assetID;
 
@@ -78,7 +78,7 @@ describe('BlogArticle', () => {
         asset.set_custom_scss('@import "_default"; * { color:red; }');
         asset.render();
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
         // Regex handles how libsass might minify the rendered CSS
         expect(hatchMetadata.document).to.match(/\*\s*{\s*color:\s*red;?\s*}/);
     });
@@ -86,7 +86,7 @@ describe('BlogArticle', () => {
     it('cleans newlines from synopsis', () => {
         asset.set_synopsis('This is a line.\nThis is the same line.\n');
         asset.render();
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
         expect(hatchMetadata.synopsis).to.equal('This is a line. This is the same line.');
     });
 });
@@ -117,7 +117,7 @@ describe('BlogArticle with parameters', () => {
 
         asset.render();
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
         delete hatchMetadata.assetID;
         delete hatchMetadata.document;
 

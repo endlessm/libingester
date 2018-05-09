@@ -50,7 +50,7 @@ describe('VideoArticle', () => {
         asset.set_date_published(new Date(1492545280000));
         asset.set_tags([ 'some', 'tags' ]);
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
 
         delete hatchMetadata.assetID;
 
@@ -75,7 +75,7 @@ describe('VideoArticle', () => {
 
         asset.set_metadata(moreMetadata);
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
         delete hatchMetadata.assetID;
         delete hatchMetadata.document;
 

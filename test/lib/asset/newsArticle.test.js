@@ -62,7 +62,7 @@ describe('NewsArticle', () => {
     it('can serialize out correctly', () => {
         asset.render();
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
 
         // Remove randomness -- should probably be a mock if I can
         // figure out how to use it.
@@ -79,7 +79,7 @@ describe('NewsArticle', () => {
     it('renders the default stylesheet if no custom SCSS set', () => {
         asset.render();
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
 
         // Match at least one CSS rule despite no custom SCSS
         expect(hatchMetadata.document).to.match(/<style(.|\n)*{(.|\n)*:(.|\n)*}(.|\n)*<\/style>/);
@@ -89,7 +89,7 @@ describe('NewsArticle', () => {
         asset.set_custom_scss('@import "_default"; * { color:red; }');
         asset.render();
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
         // Regex handles how libsass might minify the rendered CSS
         expect(hatchMetadata.document).to.match(/\*\s*{\s*color:\s*red;?\s*}/);
     });
@@ -126,7 +126,7 @@ describe('NewsArticle with parameters', () => {
 
         asset.render();
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
         delete hatchMetadata.assetID;
         delete hatchMetadata.document;
 

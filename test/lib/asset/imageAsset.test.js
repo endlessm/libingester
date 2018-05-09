@@ -47,7 +47,7 @@ describe('ImageAsset', () => {
         asset.set_last_modified_date(new Date(1492545280000));
         asset.set_image_data('image/jpeg', 'asdf');
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
 
         // Check that asset ID and thumbnail asset ID are passed through
         expect(hatchMetadata.assetID).to.equal(asset.asset_id);
@@ -82,7 +82,7 @@ describe('ImageAsset', () => {
 
         asset.set_metadata(moreMetadata);
 
-        const hatchMetadata = asset.to_metadata();
+        const hatchMetadata = asset.to_hatch_metadata();
         delete hatchMetadata.assetID;
 
         expect(hatchMetadata).to.deep.equal(expectedHatchMetadata);
