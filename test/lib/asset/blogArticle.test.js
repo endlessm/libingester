@@ -123,4 +123,12 @@ describe('BlogArticle with parameters', () => {
 
         expect(hatchMetadata).to.deep.eql(expectedHatchMetadata);
     });
+
+    it('throws error if wrong metadata is passed', () => {
+        const asset = new libingester.BlogArticle();
+        expect(() => {
+            asset.set_metadata({'title': 'Foo', 'wrong metadata': 'Bar'});
+        }).to.throw(/wrong metadata/);
+    });
+
 });
