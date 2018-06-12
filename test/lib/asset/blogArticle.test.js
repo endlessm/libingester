@@ -127,8 +127,7 @@ describe('BlogArticle with parameters', () => {
     it('throws error if wrong metadata is passed', () => {
         const asset = new libingester.BlogArticle();
         expect(() => {
-            asset.set_metadata({'title': 'Foo', 'wrong metadata': 'Bar'});
+            asset.set_metadata({ 'title': 'Foo', 'wrong metadata': 'Bar' });
         }).to.throw(/wrong metadata/);
     });
-
 });
