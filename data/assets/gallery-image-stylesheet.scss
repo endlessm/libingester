@@ -139,3 +139,18 @@ h1 {
         font-family: $support-font-composite;
     }
 }
+
+/* Smartphones (portrait and landscape) */
+@media only screen 
+and (min-device-width: 320px) 
+and (max-device-width: 719px) {
+    @include responsive-elements($body-size: 16px);
+
+    body {
+        margin:0;
+    }
+
+    h1 {
+        font-size:1.4rem;
+    }
+}
