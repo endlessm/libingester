@@ -27,7 +27,7 @@ const libingester = proxyquire('../../lib/index', {
 
 class MockAsset extends BaseAsset {
     constructor() {
-        super(mockVerifier);
+        super({}, mockVerifier);
     }
 
     fails_with_error(err) {
@@ -387,7 +387,7 @@ describe('MockAsset', () => {
     it('can set tags', () => {
         const asset = new MockAsset();
         asset.set_tags([ 'some', 'tags' ]);
-        const metadata = asset.to_metadata();
+        const metadata = asset.to_hatch_metadata();
         expect(metadata.tags).to.deep.equal([ 'some', 'tags' ]);
     });
 

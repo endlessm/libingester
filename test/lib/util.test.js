@@ -148,7 +148,7 @@ describe('download_img', () => {
             expect(asset.asset_id).is.not.undefined;
             expect(asset.to_data()).to.deep.equal(image);
 
-            const metadata = asset.to_metadata();
+            const metadata = asset.to_hatch_metadata();
             expect(metadata.contentType).to.equal('image/png');
             expect(metadata.canonicalURI).to.equal('data:image/png;' +
                                                    'uri=a://b.com/c%20d.html;' +
@@ -175,7 +175,7 @@ describe('download_img', () => {
             expect(asset.asset_id).is.not.undefined;
             expect(asset.to_data()).to.deep.equal(image);
 
-            const metadata = asset.to_metadata();
+            const metadata = asset.to_hatch_metadata();
             expect(metadata.contentType).to.equal('image/jpeg');
             expect(metadata.canonicalURI).to.equal('data:image/jpeg;' +
                                                    'uri=a://b.com/c%20d.html;' +

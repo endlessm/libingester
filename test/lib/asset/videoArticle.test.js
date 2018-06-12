@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-nested-ternary
 'use strict';
 
 const expect = require('chai').expect;
@@ -21,73 +20,65 @@ const libingester = proxyquire('../../../lib/index', {
 });
 
 const expectedHatchMetadata = {
-    'objectType': 'ImageObject',
-    'contentType': 'image/jpeg',
+    'objectType': 'VideoObject',
+    // eslint-disable-next-line no-undefined
+    'contentType': undefined,
 
     'canonicalURI': 'https://www.example.com/',
     'matchingLinks': ['https://www.example.com/'],
 
     'title': 'Test Asset',
-    'synopsis': 'Test Asset synopsis',
     'license': 'Proprietary',
-    'tags': [],
+    'tags': [ 'some', 'tags' ],
+    'synopsis': 'a long time ago...',
     'lastModifiedDate': '2017-04-18T19:54:40.000Z',
     'revisionTag': '2017-04-18T19:54:40.000Z',
+
+    'authors': ['Coco'],
+    'published': '2017-04-18T19:54:40.000Z',
 };
 
-describe('ImageAsset', () => {
+describe('VideoArticle', () => {
     it('can serialize out correctly', () => {
-        const asset = new libingester.ImageAsset();
-        const thumbnailAsset = new libingester.ImageAsset();
+        const asset = new libingester.VideoArticle();
         asset.set_title('Test Asset');
-        asset.set_synopsis('Test Asset synopsis');
-        asset.set_thumbnail(thumbnailAsset);
         asset.set_license('Proprietary');
         asset.set_canonical_uri('https://www.example.com/');
         asset.set_last_modified_date(new Date(1492545280000));
-        asset.set_image_data('image/jpeg', 'asdf');
+        asset.set_synopsis('a long time ago...');
+        asset.set_author('Coco');
+        asset.set_date_published(new Date(1492545280000));
+        asset.set_tags([ 'some', 'tags' ]);
 
         const hatchMetadata = asset.to_hatch_metadata();
 
-        // Check that asset ID and thumbnail asset ID are passed through
-        expect(hatchMetadata.assetID).to.equal(asset.asset_id);
-        expect(hatchMetadata.thumbnail).to.equal(thumbnailAsset.asset_id);
-        // Remove the ID metadata before checking the rest
         delete hatchMetadata.assetID;
-        delete hatchMetadata.thumbnail;
 
         expect(hatchMetadata).to.deep.equal(expectedHatchMetadata);
-
-        const data = asset.to_data();
-        expect(data).to.equal('asdf');
     });
 
     it('can pass metadata to constructor and set metadata at once', () => {
         const metadata = {
-            synopsis: 'Test Asset synopsis',
-            license: 'Proprietary',
+            title: 'Test Asset',
+            tags: [ 'some', 'tags' ],
+            synopsis: 'a long time ago...',
             canonical_uri: 'https://www.example.com/',
-            last_modified_date: new Date(1492545280000),
+            license: 'Proprietary',
         };
-
-        const asset = new libingester.ImageAsset(metadata);
+        const asset = new libingester.VideoArticle(metadata);
 
         const moreMetadata = {
-            title: 'Test Asset',
-            image_data: {
-                content_type: 'image/jpeg',
-                image_data: 'asdf',
-            },
+            last_modified_date: new Date(1492545280000),
+            date_published: new Date(1492545280000),
+            author: 'Coco',
         };
 
         asset.set_metadata(moreMetadata);
 
         const hatchMetadata = asset.to_hatch_metadata();
         delete hatchMetadata.assetID;
+        delete hatchMetadata.document;
 
-        expect(hatchMetadata).to.deep.equal(expectedHatchMetadata);
-
-        const data = asset.to_data();
-        expect(data).to.equal('asdf');
+        expect(hatchMetadata).to.deep.eql(expectedHatchMetadata);
     });
 });

@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-nested-ternary
 'use strict';
 
 const expect = require('chai').expect;
@@ -21,11 +20,13 @@ const libingester = proxyquire('../../../lib/index', {
 });
 
 const expectedHatchMetadata = {
-    'objectType': 'ImageObject',
-    'contentType': 'image/jpeg',
+    'objectType': 'VideoObject',
+    // eslint-disable-next-line no-undefined
+    'contentType': undefined,
 
-    'canonicalURI': 'https://www.example.com/',
-    'matchingLinks': ['https://www.example.com/'],
+    // This checks canonical URI defaults to the download URI:
+    'canonicalURI': 'https://www.example.com/download',
+    'matchingLinks': ['https://www.example.com/download'],
 
     'title': 'Test Asset',
     'synopsis': 'Test Asset synopsis',
@@ -35,17 +36,16 @@ const expectedHatchMetadata = {
     'revisionTag': '2017-04-18T19:54:40.000Z',
 };
 
-describe('ImageAsset', () => {
+describe('VideoAsset', () => {
     it('can serialize out correctly', () => {
-        const asset = new libingester.ImageAsset();
+        const asset = new libingester.VideoAsset();
         const thumbnailAsset = new libingester.ImageAsset();
         asset.set_title('Test Asset');
         asset.set_synopsis('Test Asset synopsis');
         asset.set_thumbnail(thumbnailAsset);
         asset.set_license('Proprietary');
-        asset.set_canonical_uri('https://www.example.com/');
         asset.set_last_modified_date(new Date(1492545280000));
-        asset.set_image_data('image/jpeg', 'asdf');
+        asset.set_download_uri('https://www.example.com/download');
 
         const hatchMetadata = asset.to_hatch_metadata();
 
@@ -57,27 +57,20 @@ describe('ImageAsset', () => {
         delete hatchMetadata.thumbnail;
 
         expect(hatchMetadata).to.deep.equal(expectedHatchMetadata);
-
-        const data = asset.to_data();
-        expect(data).to.equal('asdf');
     });
 
     it('can pass metadata to constructor and set metadata at once', () => {
         const metadata = {
             synopsis: 'Test Asset synopsis',
             license: 'Proprietary',
-            canonical_uri: 'https://www.example.com/',
-            last_modified_date: new Date(1492545280000),
+            download_uri: 'https://www.example.com/download',
         };
 
-        const asset = new libingester.ImageAsset(metadata);
+        const asset = new libingester.VideoAsset(metadata);
 
         const moreMetadata = {
             title: 'Test Asset',
-            image_data: {
-                content_type: 'image/jpeg',
-                image_data: 'asdf',
-            },
+            last_modified_date: new Date(1492545280000),
         };
 
         asset.set_metadata(moreMetadata);
@@ -86,8 +79,5 @@ describe('ImageAsset', () => {
         delete hatchMetadata.assetID;
 
         expect(hatchMetadata).to.deep.equal(expectedHatchMetadata);
-
-        const data = asset.to_data();
-        expect(data).to.equal('asdf');
     });
 });
