@@ -19,12 +19,15 @@ LGPL v2.1
 
 - Running tests:
  ```
- $ npm test # or ./run_tests.sh
+ $ npm test
  ```
 
 ### Linting (eslint):
  ```
- $ sudo npm install -g eslint
+ $ npm install -g eslint
+ $ npm install -g eslint-config-node
+ $ npm install -g babel-eslint
+ $ npm install -g eslint-plugin-import
 
  $ # Only show errors
  $ eslint --quiet .
