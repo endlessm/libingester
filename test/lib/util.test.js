@@ -362,3 +362,39 @@ describe('test_fetch_rss_entries', () => {
         });
     });
 });
+
+function removeEmptyLines(html) {
+    return html.replace(/^\s*\n/gm, '');
+}
+
+describe('test_cleanup_body', () => {
+    let articleHtml;
+
+    beforeEach(() => {
+        articleHtml = fs.readFileSync(`${__dirname}/test_files/article_to_clean.html`);
+    });
+    it('works with defaults', () => {
+        const expectedHtml = fs.readFileSync(`${__dirname}/test_files/article_cleaned.html`);
+        const $ = cheerio.load(articleHtml);
+        const body = $('#my-body');
+        util.cleanup_body(body);
+        expect(removeEmptyLines(body.html())).to.equal(expectedHtml.toString('utf8'));
+    });
+    it('can extend defaults', () => {
+        const expectedHtml = fs.readFileSync(`${__dirname}/test_files/article_cleaned_custom.html`);
+        const $ = cheerio.load(articleHtml);
+        const body = $('#my-body');
+        const options = {
+            remove: [
+                ...util.CLEANUP_DEFAULTS.remove,
+                'h2',
+            ],
+            removeAttrs: {
+                ...util.CLEANUP_DEFAULTS.removeAttrs,
+                'p': ['id'],
+            }
+        }
+        util.cleanup_body(body, options);
+        expect(removeEmptyLines(body.html())).to.equal(expectedHtml.toString('utf8'));
+    });
+});
