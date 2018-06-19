@@ -392,8 +392,8 @@ describe('test_cleanup_body', () => {
             removeAttrs: {
                 ...util.CLEANUP_DEFAULTS.removeAttrs,
                 'p': ['id'],
-            }
-        }
+            },
+        };
         util.cleanup_body(body, options);
         expect(removeEmptyLines(body.html())).to.equal(expectedHtml.toString('utf8'));
     });
