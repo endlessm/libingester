@@ -10,7 +10,8 @@
     <p>This is the second paragraph.</p>
     <!-- Only one br should be left, if multiple: -->
     <br><br>
-    <p>This is the third paragraph.</p>
+    <!-- any on* attribute can inject a script, should be removed: -->
+    <p onmouseover="console.log('hello')">This is the third paragraph.</p>
     <!-- Empty p elements should be removed: -->
     <p></p>
     <!-- Only one br should be left, if multiple: -->
