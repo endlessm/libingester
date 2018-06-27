@@ -383,16 +383,10 @@ describe('test_cleanup_body', () => {
         const expectedHtml = fs.readFileSync(`${__dirname}/test_files/article_cleaned_custom.html`);
         const $ = cheerio.load(articleHtml);
         const body = $('#my-body');
-        const options = {
-            remove: [
-                ...util.CLEANUP_DEFAULTS.remove,
-                'h2',
-            ],
-            removeAttrs: {
-                ...util.CLEANUP_DEFAULTS.removeAttrs,
-                'p': ['id'],
-            },
-        };
+        const options = util.extend_cleanup_defaults({
+            remove: ['h2'],
+            removeAttrs: { 'p': ['id'] },
+        });
         util.cleanup_body(body, options);
         expect(removeEmptyLines(body.html())).to.equal(expectedHtml.toString('utf8'));
     });
