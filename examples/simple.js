@@ -1,6 +1,6 @@
-const libingester = require('libingester');
+const { FeedIngester, logger } = require('libingester');
 
-class SimpleIngester extends libingester.FeedIngester {
+class SimpleIngester extends FeedIngester {
     get language () {
         return 'es';
     }
