@@ -20,6 +20,7 @@
     "file-type": "^6.1.0",
     "fs-extra": "^2.0.0",
     "image-type": "^3.0.0",
+    "lodash": "^4.17.10",
     "mustache": "^2.3.0",
     "node-sass": "^4.5.3",
     "parse-data-url": "^0.1.4",
