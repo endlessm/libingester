@@ -1,6 +1,10 @@
-const { FeedIngester, logger } = require('libingester');
+const { HtmlParser, FeedIngester, logger } = require('libingester');
 
 class SimpleIngester extends FeedIngester {
+    get parserClass () {
+        return HtmlParser;
+    }
+
     get language () {
         return 'es';
     }
