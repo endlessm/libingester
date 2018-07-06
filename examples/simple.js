@@ -5,6 +5,10 @@ class SimpleIngester extends FeedIngester {
         return HtmlParser;
     }
 
+    get name () {
+        return 'simple';
+    }
+
     get language () {
         return 'es';
     }
