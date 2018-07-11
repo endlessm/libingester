@@ -15,6 +15,7 @@
   "dependencies": {
     "aws-sdk": "^2.23.0",
     "cheerio": "^0.22.0",
+    "cheerio-advanced-selectors": "^2.0.1",
     "es6-promise-pool": "^2.5.0",
     "feedparser": "^2.2.0",
     "file-type": "^6.1.0",
