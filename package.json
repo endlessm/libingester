@@ -51,5 +51,8 @@
     "docs:publish": "npm run docs:build && git add -A docs && git commit -m 'Auto commit documentation'",
     "release": "./run_release.sh",
     "test": "./run_tests.sh"
+  },
+  "optionalDependencies": {
+    "puppeteer": "^1.5.0"
   }
 }
