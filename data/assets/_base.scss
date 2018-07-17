@@ -142,3 +142,14 @@ h6 {
         font-size: 1rem;
     }
 }
+
+@media only print {
+    // Display the URL of external sources:
+    a[href^=http]:after {
+        content: " <" attr(href) ">";
+    }
+
+    ul, img, table {
+        page-break-inside: avoid;
+    }
+}
