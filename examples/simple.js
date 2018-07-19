@@ -1,6 +1,6 @@
-const { HtmlParser, FeedIngester, logger } = require('libingester');
+const { HtmlParser, URIListIngester, FeedGenerator, logger } = require('libingester');
 
-class SimpleIngester extends FeedIngester {
+class SimpleIngester extends URIListIngester {
     get parserClass () {
         return HtmlParser;
     }
@@ -11,6 +11,13 @@ class SimpleIngester extends FeedIngester {
 
     get language () {
         return 'es';
+    }
+
+    get uriSources () {
+        const feedOptions = { feedUris: 'https://creativecommons.org/blog/feed/' };
+        return [
+            { 'class': FeedGenerator, 'options': feedOptions },
+        ];
     }
 
     get feedUris () {
