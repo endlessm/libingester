@@ -1,8 +1,8 @@
-const { Ingester, ArticleParser, FeedGenerator, logger } = require('libingester');
+const { WebIngester, HTMLArticleParser, FeedGenerator, logger } = require('libingester');
 
-class SimpleIngester extends Ingester {
+class SimpleIngester extends WebIngester {
     get parserClass () {
-        return ArticleParser;
+        return HTMLArticleParser;
     }
 
     get name () {

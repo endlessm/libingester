@@ -1,11 +1,11 @@
-const { Ingester, ArticleParser } = require('libingester');
+const { WebIngester, HTMLArticleParser } = require('libingester');
 
 // Usage:
 // node generic.js --urls https://...
 
-class GenericIngester extends Ingester {
+class GenericIngester extends WebIngester {
     get parserClass () {
-        return ArticleParser;
+        return HTMLArticleParser;
     }
 }
 
