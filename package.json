@@ -53,6 +53,7 @@
     "test": "./run_tests.sh"
   },
   "optionalDependencies": {
-    "puppeteer": "^1.5.0"
+    "puppeteer": "^1.5.0",
+    "request-promise-cache": "^2.0.0"
   }
 }
