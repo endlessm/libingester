@@ -7,7 +7,7 @@ const NO_SUBCATEGORY_SECTIONS = [
 const RELATED_CONTENT_REGEX =
     /(?:contenidos?\s*(?:relacionados?|relaciones))|(?:Lea\s*tambi[e,é]n)/gi;
 
-class PrensaLibreParser extends libingester.HtmlParser {
+class PrensaLibreParser extends libingester.ArticleParser {
     // parsePublishedDate ($) {
     //     const time = $('time.sart-time').text();
     //     const result = moment(time, 'D [de] MMMM [de] YYYY [a las] kk:mm[h]', 'es');
@@ -107,7 +107,6 @@ class PrensaLibreParser extends libingester.HtmlParser {
     }
 }
 
-// FIXME UriListIngester --> Ingester
 class PrensaLibreIngester extends libingester.Ingester {
     get parserClass () {
         return PrensaLibreParser;
