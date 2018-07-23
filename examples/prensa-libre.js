@@ -107,6 +107,7 @@ class PrensaLibreParser extends libingester.HtmlParser {
     }
 }
 
+// FIXME UriListIngester --> Ingester
 class PrensaLibreIngester extends libingester.Ingester {
     get parserClass () {
         return PrensaLibreParser;
@@ -116,14 +117,16 @@ class PrensaLibreIngester extends libingester.Ingester {
         return 'es';
     }
 
-    get feedUris () {
+    get uriSources () {
         return [
-            'http://www.prensalibre.com/rss?rss=Guatemala',
-            'http://www.prensalibre.com/rss?rss=Deportes',
-            'http://www.prensalibre.com/rss?rss=Economia',
-            'http://www.prensalibre.com/rss?rss=Vida',
-            'http://www.prensalibre.com/rss?rss=Internacional',
-            'http://www.prensalibre.com/smartTV/departamental.xml',
+            new libingester.FeedGenerator([
+                'http://www.prensalibre.com/rss?rss=Guatemala',
+                'http://www.prensalibre.com/rss?rss=Deportes',
+                'http://www.prensalibre.com/rss?rss=Economia',
+                'http://www.prensalibre.com/rss?rss=Vida',
+                'http://www.prensalibre.com/rss?rss=Internacional',
+                'http://www.prensalibre.com/smartTV/departamental.xml',
+            ]).getUris(),
         ];
     }
 }
