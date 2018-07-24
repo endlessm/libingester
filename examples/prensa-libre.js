@@ -1,3 +1,5 @@
+const cheerio = require('cheerio');
+
 const libingester = require('libingester');
 
 const NO_SUBCATEGORY_SECTIONS = [
@@ -49,6 +51,7 @@ class PrensaLibreParser extends libingester.HTMLArticleParser {
             this.processRelatedContent,
             this.processImages,
             this.processGalleries,
+            ...super.bodyProcessors,
         ];
     }
 
@@ -60,50 +63,71 @@ class PrensaLibreParser extends libingester.HTMLArticleParser {
     processRelatedContent ($body) {
         // Remove related content section from footer
         $body.find('h2, h3').each((i, elem) => {
-            const $elem = $body(elem);
+            const $elem = cheerio(elem);
             if (RELATED_CONTENT_REGEX.test($elem.text())) {
                 $elem.nextAll().each((i2, elem2) => {
-                    $body(elem2).remove();
+                    cheerio(elem2).remove();
                 });
                 $elem.remove();
             }
         });
+
+        return { $body };
     }
 
     processImages ($body) {
+        const assets = [];
+        const self = this;
+
         // Normalize images
         $body.find('figure img').each((i, elem) => {
-            const $img = $body(elem);
+            const $img = cheerio(elem);
             const $originalFigure = $img.parent();
 
-            if (this._isImageLinkEqual(this.mainImage.canonicalUri, $img.attr('src'))) {
+            if (self._isImageLinkEqual(self.mainImageUrl, $img.attr('src'))) {
                 $originalFigure.remove();
                 return;
             }
 
             const imageCaption = $originalFigure.find('figcaption').html();
 
-            const imageAsset = this.createImageAsset($img.attr('src'), imageCaption);
-            $originalFigure.replaceWith(imageAsset.render());
+            const imageAsset = libingester.processors.createImageAsset(
+                libingester.processors.getImageSource($img),
+                imageCaption
+            );
+            imageAsset.replaceWithAssetTag($originalFigure);
+
+            assets.push(imageAsset);
         });
+
+        return { $body, assets };
     }
 
     processGalleries ($body) {
+        const assets = [];
+
         $body.find('.photogallery').each((i, photoGallery) => {
-            const $photoGallery = $(photoGallery);
+            const $photoGallery = cheerio(photoGallery);
 
             $photoGallery.find('.photo').each((j, photo) => {
-                const $img = $body(photo).find('img');
+                const $img = cheerio(photo).find('img');
                 if ($img.length > 0) {
                     const imageCaption = $body(photo).find('figcaption').html();
 
-                    const imageAsset = this.createImageAsset($img.attr('src'), imageCaption);
-                    imageAsset.render().insertBefore($photoGallery.parent().parent());
+                    const imageAsset = libingester.processors.createImageAsset(
+                        libingester.processors.getImageSource($img),
+                        imageCaption
+                    );
+
+                    $photoGallery.parent().parent().before(imageAsset.getAssetTag());
+                    assets.push(imageAsset);
                 }
             });
 
             $photoGallery.parent().parent().remove();
         });
+
+        return { $body, assets };
     }
 }
 
@@ -130,4 +154,4 @@ class PrensaLibreIngester extends libingester.WebIngester {
     }
 }
 
-new PrensaLibreIngester().run();
+new PrensaLibreIngester(__dirname).run();
