@@ -77,9 +77,7 @@ class PrensaLibreParser extends libingester.HTMLArticleParser {
         $body.find('h2, h3').each((i, elem) => {
             const $elem = cheerio(elem);
             if (RELATED_CONTENT_REGEX.test($elem.text())) {
-                $elem.nextAll().each((i2, elem2) => {
-                    cheerio(elem2).remove();
-                });
+                $elem.nextAll().remove();
                 $elem.remove();
             }
         });
