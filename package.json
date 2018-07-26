@@ -54,6 +54,6 @@
   "optionalDependencies": {
     "cached-request": "^1.1.4",
     "nodemon": "^1.18.3",
-    "puppeteer": "^1.5.0"
+    "puppeteer": "^1.6.1"
   }
 }
