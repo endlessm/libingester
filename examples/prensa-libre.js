@@ -92,7 +92,7 @@ class PrensaLibreParser extends libingester.HTMLArticleParser {
         const self = this;
 
         // Normalize images
-        $body.find('figure img').each((i, elem) => {
+        $body.find('figure > img').each((i, elem) => {
             const $img = cheerio(elem);
             const $originalFigure = $img.parent();
 
