@@ -1,6 +1,10 @@
-const libingester = require('libingester');
+const Cheerio = require('cheerio');
+const {dom, out, props, rule, ruleset, score, type} = require('fathom-web');
+const Futils = require('fathom-web/utils');
+const JSDOM = require('jsdom/lib/old-api');
+const Libingester = require('libingester');
 
-class TutorialParser extends libingester.HTMLArticleParser {
+class TutorialParser extends Libingester.HTMLArticleParser {
 
     parseTitle ($) {
         return super.parseTitle($).replace(/ - Creative Commons$/,'');
@@ -24,14 +28,14 @@ class TutorialParser extends libingester.HTMLArticleParser {
     }
 }
 
-class TutorialIngester extends libingester.WebIngester {
+class TutorialIngester extends Libingester.WebIngester {
     get parserClass () {
         return TutorialParser;
     }
 
     get uriSources () {
         return [
-            new libingester.FeedGenerator('https://creativecommons.org/blog/feed/').getUris(),
+            new Libingester.FeedGenerator('https://creativecommons.org/blog/feed/').getUris(),
         ];
     }
 }
