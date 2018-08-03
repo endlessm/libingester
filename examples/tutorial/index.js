@@ -116,6 +116,10 @@ const rules = ruleset(
     rule(type('paragraphish'), score(hasAncestor('article', 10))),
     rule(dom('.entry-summary p'), score(0).type('paragraphish')),
     rule(dom('figure'), props(scoreByImageSize).type('paragraphish')),
+    rule(dom('.jetpack-video-wrapper'), props(() => ({
+        score: 100,
+        note: {length: 1},
+    })).type('paragraphish')),
 
     // Find the best cluster of paragraph-ish nodes
     rule(
@@ -128,6 +132,7 @@ const rules = ruleset(
         }),
         out('content').allThrough(Futils.domSort)));
 
+// FIXME: TODO: blog article, render template, custom SCSS
 class TutorialParser extends Libingester.HTMLArticleParser {
 
     parseTitle ($) {
@@ -168,6 +173,7 @@ class TutorialParser extends Libingester.HTMLArticleParser {
     get bodyProcessors () {
         return [
             this.processWithFathom,
+            this.processVimeoEmbeds,
             ...super.bodyProcessors,
         ];
     }
@@ -192,6 +198,91 @@ class TutorialParser extends Libingester.HTMLArticleParser {
 
         return { $body: $('article') };
     }
+
+    async processVimeoEmbeds ($body) {
+        const videoAssets = [];
+
+        // FIXME
+        const $ = this.$;
+
+        // Identify embedded videos, put them in a <figure>, and mark them for
+        // downloading
+        const videosToProcess = $body.find('.jetpack-video-wrapper')
+              .map(function () {
+                  const iframe = Cheerio('.embed-vimeo iframe', this).first();
+                  let figure;
+                  if (iframe) {
+                      figure = Cheerio('<figure></figure>');
+                      figure.append(iframe);
+                      figure = figure.insertAfter(this);
+                  }
+                  Cheerio(this).remove();
+                  return figure;
+              })
+              .get().filter(figure => !!figure);
+
+        await Promise.all(videosToProcess.map(async figure => {
+            const iframe = figure.find('iframe');
+            const {host, pathname} = url.parse(iframe.attr('src'));
+            if (host !== 'player.vimeo.com') {
+                Cheerio(iframe).remove();
+                return;
+            }
+
+            const [,, vimeoID] = pathname.split('/');
+            const {
+                description, license, link, name, pictures, privacy, tags,
+                release_time: releaseTime,
+                modified_time: modifiedTime,
+            } = await getVideoInfo(vimeoID);
+
+            // Only download if Vimeo says it is allowed and the license allows
+            // redistribution
+            const freeLicense = licenseFromVimeoLicense(license);
+            if (!privacy.download || !freeLicense) {
+                Cheerio(iframe).remove();
+                return;
+            }
+
+            // Try to get the smallest file size in a free codec
+            const {url: downloadURL} = await Youtubedl.getInfo(link, [
+                '--prefer-free-formats',
+                '--format=worst',
+            ], {
+                maxBuffer: 500 * 1024,  // JSON info is big!
+            });
+
+            const video = new Libingester.Asset();
+
+            video.setMetadata({
+                objectType: Libingester.Asset.VIDEO_OBJECT_TYPE,
+                canonicalURI: link,
+                title: name,
+                synopsis: description,
+                publishedDate: releaseTime,
+                lastModifiedDate: modifiedTime,
+                license: freeLicense,
+                tags: tagsFromVimeoTags(tags),
+            });
+            videoAssets.push(video);
+
+            // FIXME video placeholder
+            // FIXME thumbnail asset
+
+            // const video = Libingester.util.get_embedded_video_asset(iframe,
+            //                                                         downloadURL);
+
+            // const posterFrame = pictures.sizes.pop();
+            // const poster = Libingester.util.download_image(posterFrame.link);
+            // video.set_thumbnail(poster);
+
+            // hatch.save_asset(video);
+            // hatch.save_asset(poster);
+        }));
+
+        return { $body, assets: videoAssets };
+    }
+
 }
 
 class TutorialIngester extends Libingester.WebIngester {
@@ -201,7 +292,8 @@ class TutorialIngester extends Libingester.WebIngester {
 
     get uriSources () {
         return [
-            new Libingester.FeedGenerator(feedURI).getUris(),
+            ['https://creativecommons.org/2018/04/15/fellowship-memorial-fund/'],
+            // new Libingester.FeedGenerator(feedURI).getUris(),
         ];
     }
 }
