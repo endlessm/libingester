@@ -178,11 +178,6 @@ class TutorialParser extends Libingester.HTMLArticleParser {
         ];
     }
 
-    extractBody ($) {
-        // Extract body from $ here
-        return super.extractBody($);
-    }
-
     processWithFathom ($body) {
         const dom = JSDOM.jsdom($body.html(), {
             features: {ProcessExternalResources: false},
