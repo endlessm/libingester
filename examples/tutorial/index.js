@@ -197,9 +197,6 @@ class TutorialParser extends Libingester.HTMLArticleParser {
     async processVimeoEmbeds ($body) {
         const videoAssets = [];
 
-        // FIXME
-        const $ = this.$;
-
         // Identify embedded videos, put them in a <figure>, and mark them for
         // downloading
         const videosToProcess = $body.find('.jetpack-video-wrapper')
