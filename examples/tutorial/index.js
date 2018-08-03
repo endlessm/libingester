@@ -86,6 +86,17 @@ class TutorialParser extends Libingester.HTMLArticleParser {
         return $('meta[property="article:modified_time"]').attr('content');
     }
 
+    parseLicense () {
+        return 'CC BY 4.0 International';
+    }
+
+    parseReadMoreText ($) {
+        // FIXME parsers dependencies
+        const title = this.parseTitle($);
+        const author = this.parseAuthors($);
+        return `"${title}" by ${author}, used under CC BY 4.0 International / Reformatted from original`;
+    }
+
     parseTags ($) {
         // Wordpress distinguishes predefined "categories" and free-form "tags".
         // We are likely to make Wordpress categories into featured sets, and
