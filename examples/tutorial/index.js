@@ -5,8 +5,61 @@ const {dom, out, props, rule, ruleset, score, type} = require('fathom-web');
 const Futils = require('fathom-web/utils');
 const JSDOM = require('jsdom/lib/old-api');
 const Libingester = require('libingester');
+const url = require('url');
+const util = require('util');
+const {Vimeo} = require('vimeo');
+const Youtubedl = require('youtube-dl');
+
+Youtubedl.getInfo = util.promisify(Youtubedl.getInfo);
 
 const feedURI = 'https://creativecommons.org/blog/feed/';
+
+const vimeoClientID = '(fill in client ID here)';
+const vimeoClientSecret = '(fill in client secret here)';
+
+const ensureVimeoClient = (function () {
+    let vimeo;
+    return async function ensureVimeoClient() {
+        if (vimeo)
+            return vimeo;
+
+        vimeo = new Vimeo(vimeoClientID, vimeoClientSecret);
+        vimeo.generateClientCredentials =
+            util.promisify(vimeo.generateClientCredentials.bind(vimeo));
+        vimeo.request = util.promisify(vimeo.request.bind(vimeo));
+
+        const {access_token: accessToken} =
+            await vimeo.generateClientCredentials(['public']);
+        vimeo.setAccessToken(accessToken);
+        return vimeo;
+    };
+})();
+
+async function getVideoInfo(vimeoID) {
+    const vimeo = await ensureVimeoClient();
+    const fields = ['description', 'license', 'link', 'name',
+        'modified_time', 'pictures', 'privacy', 'release_time', 'tags'];
+    return await vimeo.request({
+        method: 'GET',
+        path: `/videos/${vimeoID}?fields=${fields.join(',')}`
+    });
+}
+
+function licenseFromVimeoLicense(license) {
+    switch (license) {
+    case 'by':
+        return 'CC BY 3.0';
+    case 'by-nc':
+        return 'CC BY-NC 3.0';
+    default:
+        console.warn(`Unknown license ${license}`);
+        return null;
+    }
+}
+
+function tagsFromVimeoTags(tags) {
+    return tags.map(({name}) => name);
+}
 
 function scoreByLength(fnode) {
     let length = Futils.inlineTextLength(fnode.element) * 2;
