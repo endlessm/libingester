@@ -1,13 +1,13 @@
 'use strict';
 
-const Cheerio = require('cheerio');
-const {dom, out, props, rule, ruleset, score, type} = require('fathom-web');
+const cheerio = require('cheerio');
+const { dom, out, props, rule, ruleset, score, type } = require('fathom-web');
 const Futils = require('fathom-web/utils');
 const JSDOM = require('jsdom/lib/old-api');
 const Libingester = require('libingester');
 const url = require('url');
 const util = require('util');
-const {Vimeo} = require('vimeo');
+const { Vimeo } = require('vimeo');
 const Youtubedl = require('youtube-dl');
 
 Youtubedl.getInfo = util.promisify(Youtubedl.getInfo);
@@ -17,35 +17,36 @@ const feedURI = 'https://creativecommons.org/blog/feed/';
 const vimeoClientID = '(fill in client ID here)';
 const vimeoClientSecret = '(fill in client secret here)';
 
-const ensureVimeoClient = (function () {
+const ensureVimeoClient = (() => {
     let vimeo;
-    return async function ensureVimeoClient() {
-        if (vimeo)
+    return async function _ensureVimeoClient () {
+        if (vimeo) {
             return vimeo;
+        }
 
         vimeo = new Vimeo(vimeoClientID, vimeoClientSecret);
         vimeo.generateClientCredentials =
             util.promisify(vimeo.generateClientCredentials.bind(vimeo));
         vimeo.request = util.promisify(vimeo.request.bind(vimeo));
 
-        const {access_token: accessToken} =
+        const { access_token: accessToken } =
             await vimeo.generateClientCredentials(['public']);
         vimeo.setAccessToken(accessToken);
         return vimeo;
     };
 })();
 
-async function getVideoInfo(vimeoID) {
+async function getVideoInfo (vimeoID) {
     const vimeo = await ensureVimeoClient();
     const fields = ['description', 'license', 'link', 'name',
-        'modified_time', 'pictures', 'privacy', 'release_time', 'tags'];
-    return await vimeo.request({
+                    'modified_time', 'pictures', 'privacy', 'release_time', 'tags'];
+    return vimeo.request({
         method: 'GET',
-        path: `/videos/${vimeoID}?fields=${fields.join(',')}`
+        path: `/videos/${vimeoID}?fields=${fields.join(',')}`,
     });
 }
 
-function licenseFromVimeoLicense(license) {
+function licenseFromVimeoLicense (license) {
     switch (license) {
     case 'by':
         return 'CC BY 3.0';
@@ -57,49 +58,55 @@ function licenseFromVimeoLicense(license) {
     }
 }
 
-function tagsFromVimeoTags(tags) {
-    return tags.map(({name}) => name);
+function tagsFromVimeoTags (tags) {
+    return tags.map(({ name }) => name);
 }
 
-function scoreByLength(fnode) {
+function scoreByLength (fnode) {
     let length = Futils.inlineTextLength(fnode.element) * 2;
-    if (Number.isNaN(length))
-        length = 0;  // Penalize empty nodes
+    if (Number.isNaN(length)) {
+        // Penalize empty nodes
+        length = 0;
+    }
     return {
         score: length,
-        note: {length},
+        note: { length },
     };
 }
 
-function byInverseLinkDensity(fnode) {
+function byInverseLinkDensity (fnode) {
     const linkDensity = Futils.linkDensity(fnode,
-        fnode.noteFor('paragraphish').length);
-    if (Number.isNaN(linkDensity))
+                                           fnode.noteFor('paragraphish').length);
+    if (Number.isNaN(linkDensity)) {
         return 1;
+    }
     return (1 - linkDensity) * 1.5;
 }
 
-function scoreByImageSize(fnode) {
+function scoreByImageSize (fnode) {
     const img = fnode.element.querySelector('img');
     const width = img.getAttribute('width');
     const height = img.getAttribute('height');
     let length = Futils.inlineTextLength(fnode.element) * 2;
-    if (Number.isNaN(length))
-        length = 1;  // Don't penalize empty captions
+    if (Number.isNaN(length)) {
+        // Don't penalize empty captions
+        length = 1;
+    }
     return {
         score: width && height ? width * height / 100 : 100,
-        note: {length},
+        note: { length },
     };
 }
 
 const hasAncestor = (tagName, scoreIfHas) => fnode => {
     const lowerTag = tagName.toLowerCase();
     for (let element = fnode.element, parent;
-        (parent = element.parentNode) != null &&
-            parent.nodeType === parent.ELEMENT_NODE;
+        (parent = element.parentNode) !== null &&
+         parent.nodeType === parent.ELEMENT_NODE;
         element = parent) {
-        if (element.tagName.toLowerCase() === lowerTag)
+        if (element.tagName.toLowerCase() === lowerTag) {
             return scoreIfHas;
+        }
     }
     return 1;
 };
@@ -108,7 +115,7 @@ const rules = ruleset(
     // Isolate the actual blog post body text. Based on Fathom's example
     // Readability rules
     rule(dom('p,li,ol,ul,code,blockquote,pre,h1,h2,h3,h4,h5,h6'),
-        props(scoreByLength).type('paragraphish')),
+         props(scoreByLength).type('paragraphish')),
     rule(type('paragraphish'), score(byInverseLinkDensity)),
     rule(dom('p'), score(4.5).type('paragraphish')),
 
@@ -118,7 +125,7 @@ const rules = ruleset(
     rule(dom('figure'), props(scoreByImageSize).type('paragraphish')),
     rule(dom('.jetpack-video-wrapper'), props(() => ({
         score: 100,
-        note: {length: 1},
+        note: { length: 1 },
     })).type('paragraphish')),
 
     // Find the best cluster of paragraph-ish nodes
@@ -134,9 +141,8 @@ const rules = ruleset(
 
 // FIXME: TODO: blog article, render template, custom SCSS
 class TutorialParser extends Libingester.HTMLArticleParser {
-
     parseTitle ($) {
-        return super.parseTitle($).replace(/ - Creative Commons$/,'');
+        return super.parseTitle($).replace(/ - Creative Commons$/, '');
     }
 
     parseLastModifiedDate ($) {
@@ -152,7 +158,8 @@ class TutorialParser extends Libingester.HTMLArticleParser {
         // FIXME parsers dependencies
         const title = this.parseTitle($);
         const author = this.parseAuthors($);
-        return `"${title}" by ${author}, used under CC BY 4.0 International / Reformatted from original`;
+        return `"${title}" by ${author}, ` +
+            'used under CC BY 4.0 International / Reformatted from original';
     }
 
     parseTags ($) {
@@ -163,7 +170,9 @@ class TutorialParser extends Libingester.HTMLArticleParser {
         const wpCategory = $('meta[property="article:section"]')
               .attr('content');
         const wpTags = $('meta[property="article:tag"]')
-              .map(function () { return $(this).attr('content'); })
+              .map(function () {
+                  return $(this).attr('content');
+              })
               .get();
         const tags = wpTags.map(t => `tag:${t}`);
         tags.unshift(wpCategory);
@@ -179,16 +188,17 @@ class TutorialParser extends Libingester.HTMLArticleParser {
     }
 
     processWithFathom ($body) {
-        const dom = JSDOM.jsdom($body.html(), {
-            features: {ProcessExternalResources: false},
+        const _dom = JSDOM.jsdom($body.html(), {
+            features: { ProcessExternalResources: false },
         });
-        const facts = rules.against(dom);
+        const facts = rules.against(_dom);
         const html = facts.get('content')
               .filter(fnode => fnode.scoreFor('paragraphish') > 0)
-              .map(fnode => fnode.element.outerHTML).join('');
+              .map(fnode => fnode.element.outerHTML)
+              .join('');
 
         // Load the DOM back into Cheerio
-        const $ = Cheerio.load('<article>');
+        const $ = cheerio.load('<article>');
         $('article').append(html);
 
         return { $body: $('article') };
@@ -201,23 +211,24 @@ class TutorialParser extends Libingester.HTMLArticleParser {
         // downloading
         const videosToProcess = $body.find('.jetpack-video-wrapper')
               .map(function () {
-                  const iframe = Cheerio('.embed-vimeo iframe', this).first();
+                  const iframe = cheerio('.embed-vimeo iframe', this).first();
                   let figure;
                   if (iframe) {
-                      figure = Cheerio('<figure></figure>');
+                      figure = cheerio('<figure></figure>');
                       figure.append(iframe);
                       figure = figure.insertAfter(this);
                   }
-                  Cheerio(this).remove();
+                  cheerio(this).remove();
                   return figure;
               })
-              .get().filter(figure => !!figure);
+              .get()
+              .filter(figure => Boolean(figure));
 
         await Promise.all(videosToProcess.map(async figure => {
             const iframe = figure.find('iframe');
-            const {host, pathname} = url.parse(iframe.attr('src'));
+            const { host, pathname } = url.parse(iframe.attr('src'));
             if (host !== 'player.vimeo.com') {
-                Cheerio(iframe).remove();
+                cheerio(iframe).remove();
                 return;
             }
 
@@ -232,16 +243,17 @@ class TutorialParser extends Libingester.HTMLArticleParser {
             // redistribution
             const freeLicense = licenseFromVimeoLicense(license);
             if (!privacy.download || !freeLicense) {
-                Cheerio(iframe).remove();
+                cheerio(iframe).remove();
                 return;
             }
 
             // Try to get the smallest file size in a free codec
-            const {url: downloadURL} = await Youtubedl.getInfo(link, [
+            const { url: downloadURL } = await Youtubedl.getInfo(link, [
                 '--prefer-free-formats',
                 '--format=worst',
             ], {
-                maxBuffer: 500 * 1024,  // JSON info is big!
+                // JSON info is big!
+                maxBuffer: 500 * 1024,
             });
 
             const video = new Libingester.Asset();
@@ -249,6 +261,7 @@ class TutorialParser extends Libingester.HTMLArticleParser {
             video.setMetadata({
                 objectType: Libingester.Asset.VIDEO_OBJECT_TYPE,
                 canonicalURI: link,
+                matchingLinks: [downloadURL],
                 title: name,
                 synopsis: description,
                 publishedDate: releaseTime,
@@ -258,7 +271,7 @@ class TutorialParser extends Libingester.HTMLArticleParser {
             });
             videoAssets.push(video);
 
-            const $placeholder = Cheerio('<a></a>');
+            const $placeholder = cheerio('<a></a>');
             // FIXME export somaDOM.Widget.Tag,
             // somaDOM.Widget.VideoLink
             $placeholder.attr('data-soma-widget', 'VideoLink');
@@ -276,7 +289,6 @@ class TutorialParser extends Libingester.HTMLArticleParser {
 
         return { $body, assets: videoAssets };
     }
-
 }
 
 class TutorialIngester extends Libingester.WebIngester {
