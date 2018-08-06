@@ -258,18 +258,20 @@ class TutorialParser extends Libingester.HTMLArticleParser {
             });
             videoAssets.push(video);
 
-            // FIXME video placeholder
-            // FIXME thumbnail asset
+            const $placeholder = Cheerio('<a></a>');
+            // FIXME export somaDOM.Widget.Tag,
+            // somaDOM.Widget.VideoLink
+            $placeholder.attr('data-soma-widget', 'VideoLink');
+            $placeholder.attr('data-libingester-asset-id', video.id);
+            $placeholder.addClass('media-link video');
 
-            // const video = Libingester.util.get_embedded_video_asset(iframe,
-            //                                                         downloadURL);
+            video.setMetadata('body', $placeholder.toString());
+            video.replaceWithAssetTag(iframe);
 
-            // const posterFrame = pictures.sizes.pop();
-            // const poster = Libingester.util.download_image(posterFrame.link);
-            // video.set_thumbnail(poster);
-
-            // hatch.save_asset(video);
-            // hatch.save_asset(poster);
+            const posterFrame = pictures.sizes.pop();
+            const poster = Libingester.processors.createImageAsset(posterFrame.link);
+            video.setMetadata('thumbnail', poster.id);
+            video.children.push(poster);
         }));
 
         return { $body, assets: videoAssets };
@@ -284,8 +286,7 @@ class TutorialIngester extends Libingester.WebIngester {
 
     get uriSources () {
         return [
-            ['https://creativecommons.org/2018/04/15/fellowship-memorial-fund/'],
-            // new Libingester.FeedGenerator(feedURI).getUris(),
+            new Libingester.FeedGenerator(feedURI).getUris(),
         ];
     }
 }
