@@ -100,16 +100,40 @@ function scoreByImageSize (fnode) {
 
 const hasAncestor = (tagName, scoreIfHas) => fnode => {
     const lowerTag = tagName.toLowerCase();
-    for (let element = fnode.element, parent;
-        (parent = element.parentNode) !== null &&
-         parent.nodeType === parent.ELEMENT_NODE;
-        element = parent) {
+
+    let element = fnode.element;
+    let parent;
+
+    let found = false;
+    while (!found) {
+        parent = element.parentNode;
+
+        if (parent !== null && parent.nodeType === parent.ELEMENT_NODE) {
+            found = true;
+        }
+
         if (element.tagName.toLowerCase() === lowerTag) {
             return scoreIfHas;
         }
+
+        element = parent;
     }
+
     return 1;
 };
+
+// const hasAncestor = (tagName, scoreIfHas) => fnode => {
+//     const lowerTag = tagName.toLowerCase();
+//     for (let element = fnode.element, parent;
+//         (parent = element.parentNode) !== null &&
+//          parent.nodeType === parent.ELEMENT_NODE;
+//         element = parent) {
+//         if (element.tagName.toLowerCase() === lowerTag) {
+//             return scoreIfHas;
+//         }
+//     }
+//     return 1;
+// };
 
 const rules = ruleset(
     // Isolate the actual blog post body text. Based on Fathom's example
@@ -168,12 +192,12 @@ class TutorialParser extends Libingester.HTMLArticleParser {
         // Wordpress tags non-featured. For now, we will mark the tag IDs of
         // Wordpress tags with "tag:".
         const wpCategory = $('meta[property="article:section"]')
-              .attr('content');
+            .attr('content');
         const wpTags = $('meta[property="article:tag"]')
-              .map(function () {
-                  return $(this).attr('content');
-              })
-              .get();
+            .map(function () {
+                return $(this).attr('content');
+            })
+            .get();
         const tags = wpTags.map(t => `tag:${t}`);
         tags.unshift(wpCategory);
         return tags;
@@ -193,9 +217,9 @@ class TutorialParser extends Libingester.HTMLArticleParser {
         });
         const facts = rules.against(_dom);
         const html = facts.get('content')
-              .filter(fnode => fnode.scoreFor('paragraphish') > 0)
-              .map(fnode => fnode.element.outerHTML)
-              .join('');
+            .filter(fnode => fnode.scoreFor('paragraphish') > 0)
+            .map(fnode => fnode.element.outerHTML)
+            .join('');
 
         // Load the DOM back into Cheerio
         const $ = cheerio.load('<article>');
@@ -210,19 +234,19 @@ class TutorialParser extends Libingester.HTMLArticleParser {
         // Identify embedded videos, put them in a <figure>, and mark them for
         // downloading
         const videosToProcess = $body.find('.jetpack-video-wrapper')
-              .map(function () {
-                  const iframe = cheerio('.embed-vimeo iframe', this).first();
-                  let figure;
-                  if (iframe) {
-                      figure = cheerio('<figure></figure>');
-                      figure.append(iframe);
-                      figure = figure.insertAfter(this);
-                  }
-                  cheerio(this).remove();
-                  return figure;
-              })
-              .get()
-              .filter(figure => Boolean(figure));
+            .map(function () {
+                const iframe = cheerio('.embed-vimeo iframe', this).first();
+                let figure;
+                if (iframe) {
+                    figure = cheerio('<figure></figure>');
+                    figure.append(iframe);
+                    figure = figure.insertAfter(this);
+                }
+                cheerio(this).remove();
+                return figure;
+            })
+            .get()
+            .filter(figure => Boolean(figure));
 
         await Promise.all(videosToProcess.map(async figure => {
             const iframe = figure.find('iframe');

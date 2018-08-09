@@ -24,7 +24,7 @@
                 "FunctionDeclaration": {
                     "parameters": "first"
                 },
-                "MemberExpression": "off",
+                "MemberExpression": 1,
                 "ObjectExpression": "first"
             }
         ],
