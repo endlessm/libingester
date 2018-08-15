@@ -122,19 +122,6 @@ const hasAncestor = (tagName, scoreIfHas) => fnode => {
     return 1;
 };
 
-// const hasAncestor = (tagName, scoreIfHas) => fnode => {
-//     const lowerTag = tagName.toLowerCase();
-//     for (let element = fnode.element, parent;
-//         (parent = element.parentNode) !== null &&
-//          parent.nodeType === parent.ELEMENT_NODE;
-//         element = parent) {
-//         if (element.tagName.toLowerCase() === lowerTag) {
-//             return scoreIfHas;
-//         }
-//     }
-//     return 1;
-// };
-
 const rules = ruleset(
     // Isolate the actual blog post body text. Based on Fathom's example
     // Readability rules
