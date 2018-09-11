@@ -1,7 +1,6 @@
 const libingester = require('libingester');
 
 class MyParser extends libingester.HTMLArticleParser {
-
     parseTitle ($) {
         // Parse title from $ here
         return super.parseTitle($);
