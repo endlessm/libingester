@@ -1,3 +1,5 @@
+'use strict';
+
 const libingester = require('../../../');
 
 const cheerio = require('cheerio-advanced-selectors').wrap(require('cheerio'));
