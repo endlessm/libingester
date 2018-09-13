@@ -20,13 +20,13 @@ describe('can process headers', () => {
 
     test('with defaults', async () => {
         const expected = await readHtml('normalize-headers.out-1.html');
-        const result = libingester.processors.processNormalizeHeaders($body);
+        const result = libingester.processors.normalizeHeaders($body);
         expect(result.$body.html()).toBe(expected);
     });
 
     test('does not pass h6', async () => {
         const expected = await readHtml('normalize-headers.out-2.html');
-        const result = libingester.processors.processNormalizeHeaders($body, { fromIndex: 5 });
+        const result = libingester.processors.normalizeHeaders($body, { fromIndex: 5 });
         expect(result.$body.html()).toBe(expected);
     });
 });
