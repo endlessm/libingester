@@ -48,18 +48,20 @@ class PrensaLibreParser extends libingester.HTMLArticleParser {
 
     get bodyProcessors () {
         return [
-            libingester.processors.processCleanup({
-                remove: [
-                    '[data-desktop*=".floating-aside"]',
-                    '[data-desktop*=".advice-wrap"]',
-                    '[data-mobile*=".floating-advice"]',
-                    '[data-tablet*=".floating-advice"]',
-                    '.subscribe-module',
-                    '#divInline_Notas',
-                    'article',
-                    'br',
-                ],
-            }),
+            [libingester.processors.processCleanup,
+             { options: {
+                 remove: [
+                     '[data-desktop*=".floating-aside"]',
+                     '[data-desktop*=".advice-wrap"]',
+                     '[data-mobile*=".floating-advice"]',
+                     '[data-tablet*=".floating-advice"]',
+                     '.subscribe-module',
+                     '#divInline_Notas',
+                     'article',
+                     'br',
+                 ],
+             },
+             }],
             this.processRelatedContent,
             this.processImages,
             this.processGalleries,
