@@ -135,16 +135,18 @@ describe('can tell if a tree of assets is valid', () => {
     });
 
     test('is valid by default', () => {
-        expect(asset.isValidTree()).toBe(true);
+        expect(asset.validate()).toBe(null);
     });
 
     test('fails if an immediate children fails', () => {
         mainImage.addCustomFailure('Something went wrong');
-        expect(asset.isValidTree()).toBe(false);
+        const errors = asset.validate();
+        expect(errors).toEqual({ 'custom': ['Has failed children'] });
     });
 
     test('fails if any children fails', () => {
         videoThumb.addCustomFailure('Something went wrong');
-        expect(asset.isValidTree()).toBe(false);
+        const errors = asset.validate();
+        expect(errors).toEqual({ 'custom': ['Has failed children'] });
     });
 });
