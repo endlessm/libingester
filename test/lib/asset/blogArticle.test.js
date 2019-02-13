@@ -88,6 +88,20 @@ describe('BlogArticle', () => {
         const hatchMetadata = asset.to_hatch_metadata();
         expect(hatchMetadata.synopsis).to.equal('This is a line. This is the same line.');
     });
+
+    it('can override revisionTag', () => {
+        asset.set_revision_tag('TestTag');
+        asset.render();
+        const hatchMetadata = asset.to_hatch_metadata();
+        expect(hatchMetadata.revisionTag).to.equal('TestTag');
+    });
+
+    it('can delete revisionTag', () => {
+        asset.set_revision_tag(false);
+        asset.render();
+        const hatchMetadata = asset.to_hatch_metadata();
+        expect(hatchMetadata).to.not.have.property('revisionTag');
+    });
 });
 
 describe('BlogArticle with parameters', () => {
