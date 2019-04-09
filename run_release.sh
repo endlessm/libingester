@@ -5,6 +5,7 @@ usage="Usage: npm run release -- SEMVER"
 if [ $# -ne 1 ]; then
     echo 'One single argument is needed'
     echo $usage
+    exit 1
 fi
 
 npm_version_params=$*
