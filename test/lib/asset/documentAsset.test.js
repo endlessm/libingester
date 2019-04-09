@@ -36,10 +36,10 @@ const expectedHatchMetadata = {
     'revisionTag': '2017-04-18T19:54:40.000Z',
 };
 
-describe('PdfAsset', () => {
+describe('DocumentAsset', () => {
     it('can serialize out correctly', () => {
-        const asset = new libingester.PdfAsset();
-        const thumbnailAsset = new libingester.PdfAsset();
+        const asset = new libingester.DocumentAsset();
+        const thumbnailAsset = new libingester.DocumentAsset();
         asset.set_title('Test Asset');
         asset.set_synopsis('Test Asset synopsis');
         asset.set_thumbnail(thumbnailAsset);
@@ -48,7 +48,7 @@ describe('PdfAsset', () => {
         asset.set_can_print(true);
         asset.set_canonical_uri('https://www.example.com/');
         asset.set_last_modified_date(new Date(1492545280000));
-        asset.set_pdf_data('application/pdf', 'qwerty');
+        asset.set_document_data('application/pdf', 'qwerty');
 
         const hatchMetadata = asset.to_hatch_metadata();
 
@@ -75,13 +75,13 @@ describe('PdfAsset', () => {
             last_modified_date: new Date(1492545280000),
         };
 
-        const asset = new libingester.PdfAsset(metadata);
+        const asset = new libingester.DocumentAsset(metadata);
 
         const moreMetadata = {
             title: 'Test Asset',
-            pdf_data: {
+            document_data: {
                 content_type: 'application/pdf',
-                pdf_data: 'qwerty',
+                document_data: 'qwerty',
             },
         };
 
